@@ -9,12 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app",
+      "config": {
+        "googleMapsApiKey": "${API_KEY}"
+      }
     },
     "android": {
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyDi_a45Dor8Auuj8zIzg6MyAnCRaj672WE"
+          "apiKey": "$(API_KEY)"
         }
       },
       "adaptiveIcon": {
