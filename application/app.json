@@ -12,10 +12,16 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDi_a45Dor8Auuj8zIzg6MyAnCRaj672WE"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.bu_abd.minicap_concordia_campus_guide_app"
     },
     "web": {
       "bundler": "metro",
