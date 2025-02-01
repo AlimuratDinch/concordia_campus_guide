@@ -39,8 +39,8 @@ export default function SGW_Map() {
         initialRegion={{
           latitude: 45.4978,
           longitude: -73.5795,
-          latitudeDelta: 0.002,
-          longitudeDelta: 0.002,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
         }}
       >
         {buildings.map((building, index) => {
