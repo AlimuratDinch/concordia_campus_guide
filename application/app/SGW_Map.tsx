@@ -95,6 +95,7 @@ export default function SGW_Map() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
