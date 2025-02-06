@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Ale
 import MapView, { Polygon, PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { supabase } from "./lib/supabase";
 
+
 export default function SGW_Map() {
   const [showPopup, setShowPopup] = useState(false);
   const [buildings, setBuildings] = useState<any[]>([]);
@@ -10,21 +11,29 @@ export default function SGW_Map() {
 
   useEffect(() => {
     const fetchBuildings = async () => {
-      console.log("Fetching...");
-
-      let { data, error } = await supabase.from("buildings").select("*");
-
-      if (error) {
-        Alert.alert("Error fetching data");
+      console.log("Fetching buildings...");
+      
+      // Check if supabase is correctly initialized
+      if (!supabase) {
+        console.error("Supabase is not initialized!");
         return;
       }
-
-      console.log(data);
+  
+      const { data, error } = await supabase.from("buildings").select("*");
+  
+      if (error) {
+        console.error("Error fetching data:", error);
+        Alert.alert("Error fetching data", error.message);
+        return;
+      }
+  
+      console.log("Buildings fetched:", data);
       setBuildings(data ?? []);
     };
-
+  
     fetchBuildings();
   }, []);
+  
 
   const handlePolygonPress = (building: any) => {
     setSelectedBuilding(building);
