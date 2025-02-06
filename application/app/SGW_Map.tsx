@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
-import MapView, { Polygon, PROVIDER_GOOGLE } from "react-native-maps";
+import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
+import MapView, { Polygon, PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { supabase } from "./lib/supabase";
+
 
 export default function SGW_Map() {
   const [showPopup, setShowPopup] = useState(false);
@@ -10,21 +11,29 @@ export default function SGW_Map() {
 
   useEffect(() => {
     const fetchBuildings = async () => {
-      console.log("Fetching...");
-
-      let { data, error } = await supabase.from("buildings").select("*");
-
-      if (error) {
-        Alert.alert("Error fetching data");
+      console.log("Fetching buildings...");
+      
+      // Check if supabase is correctly initialized
+      if (!supabase) {
+        console.error("Supabase is not initialized!");
         return;
       }
-
-      console.log(data);
+  
+      const { data, error } = await supabase.from("buildings").select("*");
+  
+      if (error) {
+        console.error("Error fetching data:", error);
+        Alert.alert("Error fetching data", error.message);
+        return;
+      }
+  
+      console.log("Buildings fetched:", data);
       setBuildings(data ?? []);
     };
-
+  
     fetchBuildings();
   }, []);
+  
 
   const handlePolygonPress = (building: any) => {
     setSelectedBuilding(building);
@@ -59,6 +68,7 @@ export default function SGW_Map() {
             return null;
           }
 
+   
           return (
             <Polygon
               key={index}
@@ -71,22 +81,29 @@ export default function SGW_Map() {
             />
           );
         })}
+
+        
       </MapView>
 
       {/* Floating Popup Card */}
       {showPopup && selectedBuilding && (
+  <TouchableWithoutFeedback onPress={() => setShowPopup(false)}>
+    <View style={styles.overlay}>
+      <TouchableWithoutFeedback>
         <View style={styles.popupContainer}>
           <Text style={styles.popupTitle}>{selectedBuilding.BuildingName}</Text>
           <Text style={styles.popupText}>{selectedBuilding["Building Long Name"]}</Text>
           <Text style={styles.popupText}>{selectedBuilding.Address}</Text>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setShowPopup(false)}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
         </View>
-      )}
+      </TouchableWithoutFeedback>
+    </View>
+  </TouchableWithoutFeedback>
+)}
+
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -95,6 +112,16 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  overlay: {
+  position: "absolute",
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: "rgba(0,0,0,0.2)", // Optional dim effect
+  justifyContent: "center",
+  alignItems: "center",
+},
   popupContainer: {
     position: "absolute",
     top: "30%",
@@ -113,12 +140,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#a33",
-    marginBottom: 5,
+    marginBottom: 10,
   },
   popupText: {
     fontSize: 14,
     color: "#333",
-    marginBottom: 3,
+    marginBottom: 2,
   },
   closeButton: {
     marginTop: 10,
@@ -132,4 +159,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
+  
 });
