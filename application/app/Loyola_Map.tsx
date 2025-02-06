@@ -1,21 +1,18 @@
-import MapComponent from "@/components/MapComponent";
-//import React from "react";
-//import { StyleSheet, View } from "react-native";
-import { Region } from "react-native-maps";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
-import MapView, { Polygon, PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import MapView, { Polygon, PROVIDER_GOOGLE, Marker, Circle } from "react-native-maps";
 import { supabase } from "./lib/supabase";
-
+import * as Location from "expo-location";
 
 export default function Loyola_Map() {
   const [showPopup, setShowPopup] = useState(false);
   const [buildings, setBuildings] = useState<any[]>([]);
   const [selectedBuilding, setSelectedBuilding] = useState<any>(null);
+  const [showUserLocation, setShowUserLocation] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchBuildings = async () => {
-      console.log("Fetching...");
+      console.log("Fetching buildings...");
 
       let { data, error } = await supabase.from("buildings").select("*");
 
@@ -28,12 +25,28 @@ export default function Loyola_Map() {
       setBuildings(data ?? []);
     };
 
+    const getLocationPermission = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "We need location permissions to show your location.");
+        return;
+      }
+
+      const userLocation = await Location.getCurrentPositionAsync({});
+      console.log(userLocation); // Just logging the location for now
+    };
+
     fetchBuildings();
+    getLocationPermission();
   }, []);
 
   const handlePolygonPress = (building: any) => {
     setSelectedBuilding(building);
     setShowPopup(true);
+  };
+
+  const toggleUserLocation = () => {
+    setShowUserLocation(!showUserLocation);
   };
 
   return (
@@ -47,6 +60,8 @@ export default function Loyola_Map() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
+        showsUserLocation={showUserLocation} // Show user location on map
+        followsUserLocation={false} // Don't follow user location (won't center or move)
       >
         {buildings.map((building, index) => {
           let polygonCoordinates = [];
@@ -67,8 +82,8 @@ export default function Loyola_Map() {
             <Polygon
               key={index}
               coordinates={polygonCoordinates}
-              fillColor={building.color} // Dynamic fill color
-              strokeColor={building.strokeColor} // Dynamic stroke color
+              fillColor={building.color}
+              strokeColor={building.strokeColor}
               strokeWidth={2}
               tappable={true}
               onPress={() => handlePolygonPress(building)}
@@ -77,7 +92,6 @@ export default function Loyola_Map() {
         })}
       </MapView>
 
-      {/* Floating Popup Card */}
       {showPopup && selectedBuilding && (
         <TouchableWithoutFeedback onPress={() => setShowPopup(false)}>
           <View style={styles.overlay}>
@@ -91,28 +105,34 @@ export default function Loyola_Map() {
           </View>
         </TouchableWithoutFeedback>
       )}
+
+      <TouchableOpacity style={styles.toggleButton} onPress={toggleUserLocation}>
+        <Text style={styles.toggleButtonText}>
+          {showUserLocation ? "Hide My Location" : "Show My Location"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-///
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },//new 
+  },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
   overlay: {
-  position: "absolute",
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  backgroundColor: "rgba(0,0,0,0.2)", // Optional dim effect
-  justifyContent: "center",
-  alignItems: "center",
-},
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   popupContainer: {
     position: "absolute",
     top: "30%",
@@ -140,7 +160,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 10,
-    backgroundColor: "#f16c38",
+    backgroundColor: "#912338",
     paddingVertical: 8,
     borderRadius: 5,
     alignItems: "center",
@@ -149,5 +169,20 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     fontWeight: "bold",
-  },//new
+  },
+  toggleButton: {
+    position: "absolute",
+    bottom: 20,
+    left: "50%",
+    transform: [{ translateX: -75 }],
+    backgroundColor: "#912338",
+    padding: 10,
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  toggleButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
 });
