@@ -1,43 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
-import MapView, { Polygon, PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import MapView, { Polygon, PROVIDER_GOOGLE, Marker, Circle } from "react-native-maps";
 import { supabase } from "./lib/supabase";
+import * as Location from "expo-location";
 
 
 export default function SGW_Map() {
   const [showPopup, setShowPopup] = useState(false);
   const [buildings, setBuildings] = useState<any[]>([]);
   const [selectedBuilding, setSelectedBuilding] = useState<any>(null);
+  const [showUserLocation, setShowUserLocation] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchBuildings = async () => {
       console.log("Fetching buildings...");
-      
-      // Check if supabase is correctly initialized
-      if (!supabase) {
-        console.error("Supabase is not initialized!");
-        return;
-      }
-  
-      const { data, error } = await supabase.from("buildings").select("*");
-  
+
+      let { data, error } = await supabase.from("buildings").select("*");
+
       if (error) {
-        console.error("Error fetching data:", error);
-        Alert.alert("Error fetching data", error.message);
+        Alert.alert("Error fetching data");
         return;
       }
-  
-      console.log("Buildings fetched:", data);
+
+      console.log(data);
       setBuildings(data ?? []);
     };
-  
+
+    const getLocationPermission = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "We need location permissions to show your location.");
+        return;
+      }
+
+      const userLocation = await Location.getCurrentPositionAsync({});
+      console.log(userLocation); // Just logging the location for now
+    };
+
     fetchBuildings();
+    getLocationPermission();
   }, []);
-  
 
   const handlePolygonPress = (building: any) => {
     setSelectedBuilding(building);
     setShowPopup(true);
+  };
+
+  const toggleUserLocation = () => {
+    setShowUserLocation(!showUserLocation);
   };
 
   return (
@@ -45,18 +55,19 @@ export default function SGW_Map() {
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
-        initialRegion={{
+         initialRegion={{
           latitude: 45.4978,
           longitude: -73.5795,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
+        showsUserLocation={showUserLocation} // Show user location on map
+        followsUserLocation={false} // Don't follow user location (won't center or move)
       >
         {buildings.map((building, index) => {
           let polygonCoordinates = [];
 
           try {
-            // Convert the string into an array of objects
             polygonCoordinates = JSON.parse(
               building.Latitude_Longitude_Points.replace(/\(/g, "[").replace(/\)/g, "]")
             ).map(([latitude, longitude]: [number, number]) => ({
@@ -68,42 +79,42 @@ export default function SGW_Map() {
             return null;
           }
 
-   
           return (
             <Polygon
               key={index}
               coordinates={polygonCoordinates}
-              fillColor={building.color} // Dynamic fill color
-              strokeColor={building.strokeColor} // Dynamic stroke color
+              fillColor={building.color}
+              strokeColor={building.strokeColor}
               strokeWidth={2}
               tappable={true}
               onPress={() => handlePolygonPress(building)}
             />
           );
         })}
-
-        
       </MapView>
 
-      {/* Floating Popup Card */}
       {showPopup && selectedBuilding && (
-  <TouchableWithoutFeedback onPress={() => setShowPopup(false)}>
-    <View style={styles.overlay}>
-      <TouchableWithoutFeedback>
-        <View style={styles.popupContainer}>
-          <Text style={styles.popupTitle}>{selectedBuilding.BuildingName}</Text>
-          <Text style={styles.popupText}>{selectedBuilding["Building Long Name"]}</Text>
-          <Text style={styles.popupText}>{selectedBuilding.Address}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    </View>
-  </TouchableWithoutFeedback>
-)}
+        <TouchableWithoutFeedback onPress={() => setShowPopup(false)}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback>
+              <View style={styles.popupContainer}>
+                <Text style={styles.popupTitle}>{selectedBuilding.BuildingName}</Text>
+                <Text style={styles.popupText}>{selectedBuilding["Building Long Name"]}</Text>
+                <Text style={styles.popupText}>{selectedBuilding.Address}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
 
+      <TouchableOpacity style={styles.toggleButton} onPress={toggleUserLocation}>
+        <Text style={styles.toggleButtonText}>
+          {showUserLocation ? "Hide My Location" : "Show My Location"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -113,15 +124,15 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   overlay: {
-  position: "absolute",
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  backgroundColor: "rgba(0,0,0,0.2)", // Optional dim effect
-  justifyContent: "center",
-  alignItems: "center",
-},
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   popupContainer: {
     position: "absolute",
     top: "30%",
@@ -149,7 +160,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 10,
-    backgroundColor: "#f16c38",
+    backgroundColor: "#912338",
     paddingVertical: 8,
     borderRadius: 5,
     alignItems: "center",
@@ -159,5 +170,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-  
+  toggleButton: {
+    position: "absolute",
+    bottom: 20,
+    left: "50%",
+    transform: [{ translateX: -75 }],
+    backgroundColor: "#912338",
+    padding: 10,
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  toggleButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
 });
+

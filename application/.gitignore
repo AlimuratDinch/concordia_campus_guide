@@ -44,3 +44,4 @@ app-example
 
 # .env for api
 .env
+.idea/

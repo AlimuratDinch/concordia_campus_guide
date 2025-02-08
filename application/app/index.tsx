@@ -3,9 +3,7 @@ import { Text, Pressable, View, StyleSheet } from "react-native";
 
 export default function Index() {
   return (
-    <View
-      style={styles.view}
-    >
+    <View style={styles.view}>
       <Pressable 
         style={styles.button}
         onPress={() => router.push("/SGW_Map")}
