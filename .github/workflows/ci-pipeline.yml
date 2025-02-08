@@ -27,9 +27,9 @@ jobs:
         working-directory: application
         run: npm install
 
-      # Possible typescript check
-      # - name: Check TypeScript
-      #   run: npm run type-check
+      - name: Check TypeScript
+        working-directory: application
+        run: npm run type-check && echo "✅ TypeScript check passed!"
 
       - name: Lint code
         working-directory: application
