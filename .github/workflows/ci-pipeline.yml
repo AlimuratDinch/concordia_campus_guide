@@ -35,6 +35,10 @@ jobs:
         working-directory: application
         run: npm run lint
 
+      - name: Build Expo app
+        working-directory: application
+        run: npx expo prebuild
+
       - name: Run tests
         working-directory: application
         run: npm run test -- --coverage
@@ -43,7 +47,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: application/coverage/*.json # Replace this with the path to your coverage files
+          files: application/coverage/*.json
           flags: unittests
           fail_ci_if_error: true
 
