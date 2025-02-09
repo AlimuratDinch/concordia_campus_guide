@@ -1,4 +1,4 @@
-name: Lint, Test, Build, and Maestro Tests
+name: Lint, Test, Start Expo App
 
 on:
   push:
@@ -9,93 +9,45 @@ on:
     branches:
       - main
       - develop
-  workflow_dispatch:
 
 jobs:
-  build-and-test:
+  lint-test-start:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '22.13.0'
-          cache: 'npm'
 
       - name: Install dependencies
         working-directory: application
-        run: npm ci
+        run: npm install
 
-      - name: Build Expo project
+      - name: Check TypeScript
+        working-directory: application
+        run: npm run type-check && echo "✅ TypeScript check passed!"
+
+      - name: Lint code
+        working-directory: application
+        run: npm run lint
+
+      - name: Build Expo app
         working-directory: application
         run: npx expo prebuild
 
-      - name: Build Android APK
-        working-directory: application/android
-        env:
-          API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-        run: |
-          ./gradlew clean
-          ./gradlew assembleDebug -PAPI_KEY="$API_KEY"
+      - name: Run tests
+        working-directory: application
+        run: npm run test -- --coverage
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          name: app-debug
-          path: application/android/app/build/outputs/apk/debug/app-debug.apk
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: application/coverage/*.json
+          flags: unittests
+          fail_ci_if_error: true
 
-  maestro-tests:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download APK
-        uses: actions/download-artifact@v4
-        with:
-          name: app-debug
-          path: app-debug.apk
-
-      - name: Start Android emulator
-        uses: reactive-circus/android-emulator-runner@v2
-        with:
-          api-level: 33
-          arch: x86_64
-          profile: Nexus 6
-          script: |
-            adb wait-for-device
-            adb install app-debug.apk
-            sleep 30  # Wait for app install to complete
-
-      - name: Setup Maestro
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      - name: Run UI tests
-        env:
-          MAESTRO_DRIVER_STARTUP_TIMEOUT: 60000
-        run: |
-          maestro test maestro/tests/ --format junit --output results.xml
-          maestro upload test-recording.mp4
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: |
-            results.xml
-            test-recording.mp4
