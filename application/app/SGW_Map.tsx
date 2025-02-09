@@ -27,59 +27,87 @@ export default function SGW_Map() {
   }, []);
 
   const handlePolygonPress = (building: any) => {
+    console.log("Polygon tapped:", building.BuildingName);
     setSelectedBuilding(building);
     setShowPopup(true);
   };
 
+  useEffect(() => {
+    console.log("Popup state changed:", showPopup);
+  }, [showPopup]);
+
   return (
     <View style={styles.container}>
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        initialRegion={{
-          latitude: 45.4978,
-          longitude: -73.5795,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-        {buildings.map((building, index) => {
-          let polygonCoordinates = [];
+      <TouchableOpacity style={styles.touchableOverlay} activeOpacity={1} onPress={() => console.log("Map tapped")}>
+        <MapView
+          testID="map_view"
+          provider={PROVIDER_GOOGLE}
+          style={styles.map}
+          initialRegion={{
+            latitude: 45.4978,
+            longitude: -73.5795,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+        >
+          {buildings.map((building, index) => {
+            let polygonCoordinates: { latitude: number; longitude: number }[] = [];
 
-          try {
-            // Convert the string into an array of objects
-            polygonCoordinates = JSON.parse(
-              building.Latitude_Longitude_Points.replace(/\(/g, "[").replace(/\)/g, "]")
-            ).map(([latitude, longitude]: [number, number]) => ({
-              latitude,
-              longitude,
-            }));
-          } catch (error) {
-            console.error("Error parsing coordinates for", building.BuildingName, error);
-            return null;
-          }
+            try {
+              // Convert the string into an array of objects
+              const parsedCoordinates = JSON.parse(
+                building.Latitude_Longitude_Points.replace(/\(/g, "[").replace(/\)/g, "]")
+              );
 
-          return (
-            <Polygon
-              key={index}
-              coordinates={polygonCoordinates}
-              fillColor={building.color} // Dynamic fill color
-              strokeColor={building.strokeColor} // Dynamic stroke color
-              strokeWidth={2}
-              tappable={true}
-              onPress={() => handlePolygonPress(building)}
-            />
-          );
-        })}
-      </MapView>
+              // Check if coordinates are valid before mapping
+              if (Array.isArray(parsedCoordinates)) {
+                polygonCoordinates = parsedCoordinates.map(
+                  ([latitude, longitude]: [number, number]) => ({
+                    latitude,
+                    longitude,
+                  })
+                );
+              } else {
+                console.error("Invalid coordinate data for", building.BuildingName);
+                return null;
+              }
+            } catch (error) {
+              console.error("Error parsing coordinates for", building.BuildingName, error);
+              return null;
+            }
+
+            return (
+              <Polygon
+                key={index}
+                coordinates={polygonCoordinates}
+                fillColor={building.color} // Dynamic fill color
+                strokeColor={building.strokeColor} // Dynamic stroke color
+                strokeWidth={2}
+                tappable={true}
+                onPress={() => handlePolygonPress(building)}
+              />
+            );
+          })}
+        </MapView>
+      </TouchableOpacity>
 
       {/* Floating Popup Card */}
       {showPopup && selectedBuilding && (
-        <View style={styles.popupContainer}>
-          <Text style={styles.popupTitle}>{selectedBuilding.BuildingName}</Text>
-          <Text style={styles.popupText}>{selectedBuilding["Building Long Name"]}</Text>
-          <Text style={styles.popupText}>{selectedBuilding.Address}</Text>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setShowPopup(false)}>
+        <View testID="building_popup" style={styles.popupContainer}>
+          <Text testID="building_name" style={styles.popupTitle}>
+            {selectedBuilding.BuildingName}
+          </Text>
+          <Text testID="building_full_name" style={styles.popupText}>
+            {selectedBuilding["Building Long Name"]}
+          </Text>
+          <Text testID="building_address" style={styles.popupText}>
+            {selectedBuilding.Address}
+          </Text>
+          <TouchableOpacity
+            testID="popup_close_button"
+            style={styles.closeButton}
+            onPress={() => setShowPopup(false)}
+          >
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
@@ -131,5 +159,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     fontWeight: "bold",
+  },
+  touchableOverlay: {
+    ...StyleSheet.absoluteFillObject,
   },
 });
