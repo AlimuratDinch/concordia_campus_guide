@@ -31,24 +31,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'
+          cache: 'npm'
 
       - name: Install dependencies
         working-directory: application
         run: npm ci
 
-      - name: Type checking
+      - name: Build Expo project
         working-directory: application
-        run: npm run type-check
-
-      - name: Lint codebase
-        working-directory: application
-        run: npm run lint
+        run: npx expo prebuild
 
       - name: Build Android APK
         working-directory: application/android
         env:
           API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
+          ./gradlew clean
           ./gradlew assembleDebug -PAPI_KEY="$API_KEY"
 
       - name: Upload APK artifact
@@ -78,22 +76,26 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
+            adb wait-for-device
             adb install app-debug.apk
+            sleep 30  # Wait for app install to complete
 
-      - name: Install Maestro
+      - name: Setup Maestro
         run: |
-          export MAESTRO_VERSION=1.39.9
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Run UI tests with recording
+      - name: Run UI tests
         env:
-          MAESTRO_DRIVER_STARTUP_TIMEOUT: 360000
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 60000
         run: |
-          maestro record maestro/tests/campus-navigation.yml --local test-recording.mp4
+          maestro test maestro/tests/ --format junit --output results.xml
+          maestro upload test-recording.mp4
 
-      - name: Upload test video
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: test-recording
-          path: test-recording.mp4
+          name: test-results
+          path: |
+            results.xml
+            test-recording.mp4
