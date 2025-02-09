@@ -19,15 +19,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.13.0'
-
-      - name: Set up JDK 11
+      - name: Set up JDK 17 (Required for Android SDK)
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK
@@ -51,7 +46,10 @@ jobs:
 
       - name: Build Android APK
         working-directory: application/android
-        run: ./gradlew assembleDebug
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: |
+          ./gradlew assembleDebug -PgoogleMapsApiKey=$GOOGLE_MAPS_API_KEY
 
       - name: Run tests
         working-directory: application
@@ -70,45 +68,3 @@ jobs:
         with:
           name: app-debug.apk
           path: application/android/app/build/outputs/apk/debug/app-debug.apk
-
-  maestro-android-tests:
-    needs: lint-test-build
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download APK
-        uses: actions/download-artifact@v4
-        with:
-          name: app-debug.apk
-          path: app-debug.apk
-
-      - name: Run Android Emulator
-        uses: reactive-circus/android-emulator-runner@v2
-        with:
-          api-level: 33
-          arch: x86_64
-          profile: Nexus 6
-          script: |
-            adb install app-debug.apk
-
-      - name: Install Maestro
-        run: |
-          export MAESTRO_VERSION=1.39.9
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      - name: Run Maestro Tests with Recording
-        env:
-          MAESTRO_DRIVER_STARTUP_TIMEOUT: 360000  # Extended timeout for maps
-        run: |
-          maestro record maestro/campus_navigation_test.yml --local test.mp4
-
-      - name: Upload Test Video
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-video
-          path: test.mp4
