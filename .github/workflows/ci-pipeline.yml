@@ -27,13 +27,17 @@ jobs:
         working-directory: application
         run: npm install
 
-      # Possible typescript check
-      # - name: Check TypeScript
-      #   run: npm run type-check
+      - name: Check TypeScript
+        working-directory: application
+        run: npm run type-check && echo "✅ TypeScript check passed!"
 
       - name: Lint code
         working-directory: application
         run: npm run lint
+
+      - name: Build Expo app
+        working-directory: application
+        run: npx expo prebuild
 
       - name: Run tests
         working-directory: application
@@ -43,7 +47,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: application/coverage/*.json # Replace this with the path to your coverage files
+          files: application/coverage/*.json
           flags: unittests
           fail_ci_if_error: true
 
