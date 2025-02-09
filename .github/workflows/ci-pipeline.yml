@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
 
 jobs:
   lint-test-build:
@@ -16,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'
 
@@ -65,7 +66,7 @@ jobs:
           fail_ci_if_error: true
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
           path: application/android/app/build/outputs/apk/debug/app-debug.apk
@@ -77,15 +78,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download APK
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: app-debug.apk
           path: app-debug.apk
 
-      - name: Run Android Emulator and Tests
+      - name: Run Android Emulator
         uses: reactive-circus/android-emulator-runner@v2
         with:
           api-level: 33
@@ -93,20 +94,21 @@ jobs:
           profile: Nexus 6
           script: |
             adb install app-debug.apk
-            # Install Maestro
-            curl -Ls "https://get.maestro.mobile.dev" | bash
-            export PATH="$PATH:$HOME/.maestro/bin"
-            # Run Maestro tests
-            maestro test your-maestro-tests.yaml
-            # Optional: Save test results
-            mkdir -p maestro-results
-            maestro report --format junit --output maestro-results/results.xml
-        env:
-          MAESTRO_VERSION: 1.31.0  # Specify a specific version if needed
 
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Install Maestro
+        run: |
+          export MAESTRO_VERSION=1.39.9
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Run Maestro Tests with Recording
+        env:
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 360000  # Extended timeout for maps
+        run: |
+          maestro record maestro/campus_navigation_test.yml --local test.mp4
+
+      - name: Upload Test Video
+        uses: actions/upload-artifact@v4
         with:
-          name: maestro-results
-          path: maestro-results
+          name: test-video
+          path: test.mp4
