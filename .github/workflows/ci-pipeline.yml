@@ -1,4 +1,4 @@
-name: Lint, Test, Start Expo App
+name: Lint, Test, Build, and Maestro Tests
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - develop
 
 jobs:
-  lint-test-start:
+  lint-test-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22.13.0'
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
 
       - name: Install dependencies
         working-directory: application
@@ -39,6 +48,10 @@ jobs:
         working-directory: application
         run: npx expo prebuild
 
+      - name: Build Android APK
+        working-directory: application/android
+        run: ./gradlew assembleDebug
+
       - name: Run tests
         working-directory: application
         run: npm run test -- --coverage
@@ -51,3 +64,49 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
 
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: application/android/app/build/outputs/apk/debug/app-debug.apk
+
+  maestro-android-tests:
+    needs: lint-test-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download APK
+        uses: actions/download-artifact@v3
+        with:
+          name: app-debug.apk
+          path: app-debug.apk
+
+      - name: Run Android Emulator and Tests
+        uses: reactive-circus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          profile: Nexus 6
+          script: |
+            adb install app-debug.apk
+            # Install Maestro
+            curl -Ls "https://get.maestro.mobile.dev" | bash
+            export PATH="$PATH:$HOME/.maestro/bin"
+            # Run Maestro tests
+            maestro test your-maestro-tests.yaml
+            # Optional: Save test results
+            mkdir -p maestro-results
+            maestro report --format junit --output maestro-results/results.xml
+        env:
+          MAESTRO_VERSION: 1.31.0  # Specify a specific version if needed
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: maestro-results
+          path: maestro-results
