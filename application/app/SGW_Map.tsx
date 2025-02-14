@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert, Linking,} from "react-native";
 import MapView, { Polygon, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { supabase } from "./lib/supabase";
 import * as Location from "expo-location";
+import SearchBar from './components/SearchBar';
 
 /** Define a coordinate interface */
 interface Coordinate {
@@ -33,6 +34,50 @@ export default function SGW_Map() {
     null
   );
 
+  // Get building names for search
+  const buildingNames = buildings.map(building => building.BuildingName);
+
+  // Function to center map on a building
+  const centerMapOnBuilding = (building: Building) => {
+    try {
+      const points = building.Latitude_Longitude_Points.split(';');
+      if (points.length > 0) {
+        const [lat, lng] = points[0].split(',').map(Number);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          console.log('Centering map on:', lat, lng);
+          mapRef.current?.animateToRegion(
+            {
+              latitude: lat,
+              longitude: lng,
+              latitudeDelta: 0.002,
+              longitudeDelta: 0.002,
+            },
+            500
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error centering map:', error);
+    }
+  };
+
+  // Handle search selection
+  const handleSearchSelect = (selectedName: string) => {
+    const building = buildings.find(b => b.BuildingName === selectedName);
+    if (building) {
+      setSelectedBuilding(building);
+      setShowPopup(true);
+    }
+  };
+
+  // Handle polygon press
+  const handlePolygonPress = (building: Building) => {
+    setSelectedBuilding(building);
+    setShowPopup(true);
+  };
+
+  const mapRef = useRef<MapView>(null);
+
   useEffect(() => {
     const fetchBuildings = async () => {
       console.log("Fetching buildings...");
@@ -61,6 +106,12 @@ export default function SGW_Map() {
     fetchBuildings();
     getLocationPermission();
   }, []);
+
+  useEffect(() => {
+    if (startBuilding) {
+      centerMapOnBuilding(startBuilding);
+    }
+  }, [startBuilding]);
 
   /**
    * Convert a building's coordinate string to an array of Coordinate.
@@ -95,12 +146,6 @@ export default function SGW_Map() {
       latitude: latSum / coords.length,
       longitude: lngSum / coords.length,
     };
-  };
-
-  // When user taps a polygon, show popup
-  const handlePolygonPress = (building: Building) => {
-    setSelectedBuilding(building);
-    setShowPopup(true);
   };
 
   // Toggle user location on the map
@@ -143,35 +188,38 @@ export default function SGW_Map() {
     );
   };
 
+  const renderBuilding = (building: Building, index: number) => {
+    const coords = parseCoordinates(building);
+    if (!coords.length) return null;
+
+    return (
+      <Polygon
+        key={index}
+        coordinates={coords}
+        fillColor={building.color}
+        strokeColor={building.strokeColor}
+        strokeWidth={2}
+        tappable={true}
+        onPress={() => handlePolygonPress(building)}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: 45.4978,
-          longitude: -73.5795,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitude: 45.497222,
+          longitude: -73.579056,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
         }}
         showsUserLocation={showUserLocation}
       >
-        {buildings.map((building, index) => {
-          const coords = parseCoordinates(building);
-          if (!coords.length) return null;
-
-          return (
-            <Polygon
-              key={index}
-              coordinates={coords}
-              fillColor={building.color}
-              strokeColor={building.strokeColor}
-              strokeWidth={2}
-              tappable={true}
-              onPress={() => handlePolygonPress(building)}
-            />
-          );
-        })}
+        {buildings.map((building, index) => renderBuilding(building, index))}
 
         {/* Marker for Start Building */}
         {startBuilding && (
@@ -191,6 +239,15 @@ export default function SGW_Map() {
           />
         )}
       </MapView>
+
+      <View style={styles.searchContainer}>
+        <SearchBar
+          data={buildingNames}
+          onSelect={handleSearchSelect}
+          placeholder="Search buildings..."
+          style={styles.searchBar}
+        />
+      </View>
 
       {/* Building Popup */}
       {showPopup && selectedBuilding && (
@@ -242,6 +299,20 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  searchContainer: {
+    position: 'absolute',
+    top: 40,
+    left: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  searchBar: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   overlay: {
     position: "absolute",
