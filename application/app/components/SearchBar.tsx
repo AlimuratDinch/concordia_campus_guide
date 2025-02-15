@@ -88,13 +88,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   input: {
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 12,
     backgroundColor: 'white',
     fontSize: 16,
+    marginTop: 20,
+
   },
   dropdown: {
     position: 'absolute',
