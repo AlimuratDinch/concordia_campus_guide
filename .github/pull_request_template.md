@@ -22,6 +22,7 @@ npx expo start
 > Please, read carefully each item before checking it. Your PR's review might be delayed otherwise.
 
 * **Code** :
+  * [ ] I have added all necessary unit tests to demonstrate that my code functions as expected and is testable.
   * [ ] The code I'm asking a review for is working. **I understand that my PR will be rejected as-is otherwise.**
   * [ ] My code follows the conventions described in the `contribution guide`.
  
