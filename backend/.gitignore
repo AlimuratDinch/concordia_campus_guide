@@ -1,0 +1,29 @@
+# Node modules (do not commit dependencies)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment variables (keep secrets safe)
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor and OS-specific files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Build files (if using TypeScript)
+dist/
+build/
+
+# If using Supabase CLI
+.supabase/
