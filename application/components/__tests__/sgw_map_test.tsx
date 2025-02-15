@@ -130,11 +130,9 @@ describe('SGW_Map', () => {
     fireEvent.press(polygons[1]); // Destination
     fireEvent.press(getByText('Set as Destination'));
 
-    // Press "Navigate"
     const navigateButton = getByText('Navigate');
     fireEvent.press(navigateButton);
 
-    // Ensure it calls Linking.openURL with the correct data
     await waitFor(() => {
       expect(openURLSpy).toHaveBeenCalled();
       const urlArg = openURLSpy.mock.calls[0][0];
@@ -146,3 +144,6 @@ describe('SGW_Map', () => {
     openURLSpy.mockRestore();
   });
 });
+
+
+// to create new snapshot: npm test -- -u
