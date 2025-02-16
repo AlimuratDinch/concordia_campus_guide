@@ -16,6 +16,13 @@ export default function Index() {
       >
         <Text style={styles.buttonText}>Link to LOY</Text>
       </Pressable>
+
+      <Pressable 
+        style={styles.button}
+        onPress={() => router.push("/CampusMap")}
+      >
+        <Text style={styles.buttonText}>Campus Map</Text>
+      </Pressable>
     </View>
   );
 }

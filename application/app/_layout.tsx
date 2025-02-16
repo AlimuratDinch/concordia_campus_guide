@@ -15,6 +15,12 @@ export default function RootLayout() {
           headerTitle: "Loyola map",
         }}
       />
+      <Stack.Screen 
+        name="CampusMap"
+        options={{
+          headerTitle: "Campus map",
+        }}
+      />
     </Stack>
   );
 }
