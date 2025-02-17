@@ -169,8 +169,8 @@ export default function SGW_Map() {
         {/* Marker for Destination Building */}
         {destinationBuilding && (
           <Marker
-          coordinate={getCenterFromCoordinates(mapCoordinates(destinationBuilding.Latitude_Longitude_Points))!}
-          pinColor="red"
+            coordinate={getCenterFromCoordinates(mapCoordinates(destinationBuilding.Latitude_Longitude_Points))!}
+            pinColor="red"
             title="Destination"
           />
         )}
@@ -188,11 +188,11 @@ export default function SGW_Map() {
       {/* Building Popup */}
       {showPopup && selectedBuilding && (
         <BuildingPopup
-        building={selectedBuilding}
-        onClose={() => setShowPopup(false)}
-        onSetStart={handleSetStart}
-        onSetDestination={handleSetDestination}
-      />
+          building={selectedBuilding}
+          onClose={() => setShowPopup(false)}
+          onSetStart={handleSetStart}
+          onSetDestination={handleSetDestination}
+        />
       )}
 
       {/* Toggle user location */}
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: 'absolute',
-    top: 40,
+    top: 0,
     left: 10,
     right: 10,
     zIndex: 1,
@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  
   toggleButton: {
     position: "absolute",
     bottom: 80,

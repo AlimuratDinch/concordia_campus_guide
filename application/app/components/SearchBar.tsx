@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     zIndex: 1,
-    width: '100%',
+    width: '85%',
   },
   input: {
     height: 50,
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     fontSize: 16,
     marginTop: 20,
-
   },
   dropdown: {
     position: 'absolute',

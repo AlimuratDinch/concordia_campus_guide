@@ -142,10 +142,9 @@ export default function Loyola_Map() {
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
-        // Set an initial region near Loyola campus.
         initialRegion={{
-          latitude: 45.456534,
-          longitude: -73.638106,
+          latitude: 45.458225,
+          longitude: -73.640331,
           latitudeDelta: 0.02,
           longitudeDelta: 0.02,
         }}
@@ -156,18 +155,24 @@ export default function Loyola_Map() {
         {/* Marker for Start Building */}
         {startBuilding && (
           <Marker
-            coordinate={getCenterFromCoordinates(mapCoordinates(startBuilding.Latitude_Longitude_Points))!}
-            pinColor="green"
+            coordinate={{
+              latitude: parseFloat(startBuilding.Latitude_Longitude_Points.split(';')[0].split(',')[0]),
+              longitude: parseFloat(startBuilding.Latitude_Longitude_Points.split(';')[0].split(',')[1]),
+            }}
             title="Start"
+            pinColor="green"
           />
         )}
 
         {/* Marker for Destination Building */}
         {destinationBuilding && (
           <Marker
-          coordinate={getCenterFromCoordinates(mapCoordinates(destinationBuilding.Latitude_Longitude_Points))!}
-            pinColor="red"
+            coordinate={{
+              latitude: parseFloat(destinationBuilding.Latitude_Longitude_Points.split(';')[0].split(',')[0]),
+              longitude: parseFloat(destinationBuilding.Latitude_Longitude_Points.split(';')[0].split(',')[1]),
+            }}
             title="Destination"
+            pinColor="red"
           />
         )}
       </MapView>
@@ -183,12 +188,15 @@ export default function Loyola_Map() {
 
       {/* Building Popup */}
       {showPopup && selectedBuilding && (
-        <BuildingPopup
-          building={selectedBuilding}
-          onClose={() => setShowPopup(false)}
-          onSetStart={handleSetStart}
-          onSetDestination={handleSetDestination}
-        />
+        <TouchableOpacity onPress={() => setShowPopup(false)}>
+          <View style={styles.overlay}>
+            <View style={styles.popup}>
+              <Text style={styles.title}>{selectedBuilding.BuildingName}</Text>
+              <Text>{selectedBuilding["Building Long Name"]}</Text>
+              <Text>{selectedBuilding.Address}</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
       )}
 
       {/* Toggle user location */}
@@ -209,13 +217,15 @@ export default function Loyola_Map() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
   searchContainer: {
     position: "absolute",
-    top: 40,
+    top: 0,
     left: 10,
     right: 10,
     zIndex: 1,
@@ -261,5 +271,26 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     fontWeight: "bold",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  popup: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    width: 300,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 });
