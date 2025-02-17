@@ -1,3 +1,12 @@
+export interface Building {
+  BuildingName: string;
+  "Building Long Name": string;
+  Address: string;
+  Latitude_Longitude_Points: string;
+  color: string;
+  strokeColor: string;
+}
+
 export interface Coordinate {
   latitude: number;
   longitude: number;
