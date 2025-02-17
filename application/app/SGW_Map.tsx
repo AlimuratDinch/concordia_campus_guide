@@ -219,16 +219,18 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: 'absolute',
-    top: 0,
+    top: 12,
     left: 10,
     right: 10,
-    zIndex: 1,
+    // zIndex: 1,
+    width: '80%',
   },
   searchBar: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.25,
+    shadowRadius: 8,
+    borderRadius: 8,
     elevation: 5,
   },
   toggleButton: {
