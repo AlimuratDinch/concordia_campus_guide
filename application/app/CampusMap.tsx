@@ -1,77 +1,166 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
-import MapView, { Polygon, PROVIDER_GOOGLE, Marker, Circle } from "react-native-maps";
-import { supabase } from "./lib/supabase";
+import {StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert, Linking,} from "react-native";
+import MapView, { Polygon, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
+import SearchBar from './components/SearchBar';
+import BuildingPopup from "./components/BuildingPopup";
+import { parseCoordinates, getCenterFromCoordinates, mapCoordinates, Coordinate } from "./utils/coordinateHelpers";
+import { useBuildings } from './utils/useBuildings';
 
+interface Building {
+  BuildingName: string;
+  "Building Long Name": string;
+  Address: string;
+  Latitude_Longitude_Points: string;
+  color: string;
+  strokeColor: string;
+}
 
 export default function CampusMap() {
+  // State
+  const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [buildings, setBuildings] = useState<any[]>([]);
-  const [selectedBuilding, setSelectedBuilding] = useState<any>(null);
   const [showUserLocation, setShowUserLocation] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchBuildings = async () => {
-      console.log("Fetching buildings...");
+  // Start & Destination
+  const [startBuilding, setStartBuilding] = useState<Building | null>(null);
+  const [destinationBuilding, setDestinationBuilding] = useState<Building | null>(
+    null
+  );
 
-      let { data, error } = await supabase.from("buildings").select("*");
+  // function to retreive the building
+  const buildings = useBuildings();
 
-      if (error) {
-        Alert.alert("Error fetching data");
-        return;
+  // Get building names for search
+  const buildingNames = buildings.map(building => building.BuildingName);
+
+  // Function to center map on a building
+  const centerMapOnBuilding = (building: Building) => {
+    try {
+      const points = building.Latitude_Longitude_Points.split(';');
+      if (points.length > 0) {
+        const [lat, lng] = points[0].split(',').map(Number);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          console.log('Centering map on:', lat, lng);
+          mapRef.current?.animateToRegion(
+            {
+              latitude: lat,
+              longitude: lng,
+              latitudeDelta: 0.002,
+              longitudeDelta: 0.002,
+            },
+            500
+          );
+        }
       }
+    } catch (error) {
+      console.error('Error centering map:', error);
+    }
+  };
 
-      console.log(data);
-      setBuildings(data ?? []);
-    };
+  // Handle search selection
+  const handleSearchSelect = (selectedName: string) => {
+    const building = buildings.find(b => b.BuildingName === selectedName);
+    if (building) {
+      setSelectedBuilding(building);
+      setShowPopup(true);
+    }
+  };
 
-    const getLocationPermission = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Permission denied", "We need location permissions to show your location.");
-        return;
-      }
-
-      const userLocation = await Location.getCurrentPositionAsync({});
-      console.log(userLocation); // Just logging the location for now
-    };
-
-    fetchBuildings();
-    getLocationPermission();
-  }, []);
-
-  const handlePolygonPress = (building: any) => {
+  // Handle polygon press
+  const handlePolygonPress = (building: Building) => {
     setSelectedBuilding(building);
     setShowPopup(true);
   };
 
+  const mapRef = useRef<MapView>(null);
+  const [selectedCampus, setSelectedCampus] = useState("SGW");
+    const switchCampuses = (campus: string) => {
+      setSelectedCampus(campus);
+      const region = 
+          campus === "SGW"
+              ? {
+                  latitude: 45.4978,
+                  longitude: -73.5795,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+              }
+              : {
+                  latitude: 45.45789,
+                  longitude: -73.63996,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+              };
+      if (mapRef.current) {
+          mapRef.current.animateToRegion(region, 1000);
+      }
+      return () => {};
+    };
+
+  useEffect(() => {
+    if (startBuilding) {
+      centerMapOnBuilding(startBuilding);
+    }
+  }, [startBuilding]);
+
+ 
+  // Toggle user location on the map
   const toggleUserLocation = () => {
     setShowUserLocation(!showUserLocation);
   };
 
-  const mapRef = useRef<MapView>(null);
-  const [selectedCampus, setSelectedCampus] = useState("SGW");
-  const switchCampuses = (campus: string) => {
-    setSelectedCampus(campus);
-    const region = 
-        campus === "SGW"
-            ? {
-                latitude: 45.4978,
-                longitude: -73.5795,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-            }
-            : {
-                latitude: 45.45789,
-                longitude: -73.63996,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-            };
-    if (mapRef.current) {
-        mapRef.current.animateToRegion(region, 1000);
+  // Assign building as start/destination
+  const handleSetStart = () => {
+    if (!selectedBuilding) return;
+    setStartBuilding(selectedBuilding);
+    setShowPopup(false);
+  };
+
+  const handleSetDestination = () => {
+    if (!selectedBuilding) return;
+    setDestinationBuilding(selectedBuilding);
+    setShowPopup(false);
+  };
+
+  /**
+   * Opens Google Maps externally for directions.
+   */
+  const handleNavigate = () => {
+    if (!startBuilding || !destinationBuilding) return;
+
+    const origin = getCenterFromCoordinates(parseCoordinates(startBuilding.Latitude_Longitude_Points));
+    const destination = getCenterFromCoordinates(parseCoordinates(destinationBuilding.Latitude_Longitude_Points));
+
+
+    if (!origin || !destination) {
+      Alert.alert("Error", "Missing coordinates for navigation");
+      return;
     }
-    return () => {};
+
+    // Launch Google Maps in a browser/app
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&travelmode=driving`;
+
+    Linking.openURL(url).catch((err) =>
+      Alert.alert("Error launching Google Maps", err.message)
+    );
+  };
+
+  const renderBuilding = (building: Building, index: number) => {
+    const coords = parseCoordinates(building.Latitude_Longitude_Points);
+    if (!coords.length) return null;
+
+    return (
+      <Polygon
+        key={index}
+        coordinates={coords}
+        fillColor={building.color}
+        strokeColor={building.strokeColor}
+        strokeWidth={2}
+        tappable={true}
+        onPress={() => handlePolygonPress(building)}
+        testID={`polygon-${index}`}// for the test
+      />
+    );
   };
 
   return (
@@ -80,167 +169,172 @@ export default function CampusMap() {
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
-         initialRegion={{
+        initialRegion={{
           latitude: 45.4978,
           longitude: -73.5795,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
-        showsUserLocation={showUserLocation} // Show user location on map
-        followsUserLocation={false} // Don't follow user location (won't center or move)
+        showsUserLocation={showUserLocation}
+        followsUserLocation={false}
       >
-        {buildings.map((building, index) => {
-          let polygonCoordinates = [];
+        {buildings.map((building, index) => renderBuilding(building, index))}
 
-          try {
-            polygonCoordinates = JSON.parse(
-              building.Latitude_Longitude_Points.replace(/\(/g, "[").replace(/\)/g, "]")
-            ).map(([latitude, longitude]: [number, number]) => ({
-              latitude,
-              longitude,
-            }));
-          } catch (error) {
-            console.error("Error parsing coordinates for", building.BuildingName, error);
-            return null;
-          }
+        {/* Marker for Start Building */}
+        {startBuilding && (
+          <Marker
+            coordinate={getCenterFromCoordinates(mapCoordinates(startBuilding.Latitude_Longitude_Points))!}
+            pinColor="green"
+            title="Start"
+          />
+        )}
 
-          return (
-            <Polygon
-              key={index}
-              coordinates={polygonCoordinates}
-              fillColor={building.color}
-              strokeColor={building.strokeColor}
-              strokeWidth={2}
-              tappable={true}
-              onPress={() => handlePolygonPress(building)}
-            />
-          );
-        })}
+        {/* Marker for Destination Building */}
+        {destinationBuilding && (
+          <Marker
+            coordinate={getCenterFromCoordinates(mapCoordinates(destinationBuilding.Latitude_Longitude_Points))!}
+            pinColor="red"
+            title="Destination"
+          />
+        )}
       </MapView>
 
+      <View style={styles.searchContainer}>
+        <SearchBar
+          data={buildingNames}
+          onSelect={handleSearchSelect}
+          placeholder="Search buildings..."
+          style={styles.searchBar}
+        />
+      </View>
+
+      {/* Building Popup */}
       {showPopup && selectedBuilding && (
-        <TouchableWithoutFeedback onPress={() => setShowPopup(false)}>
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.popupContainer}>
-                <Text style={styles.popupTitle}>{selectedBuilding.BuildingName}</Text>
-                <Text style={styles.popupText}>{selectedBuilding["Building Long Name"]}</Text>
-                <Text style={styles.popupText}>{selectedBuilding.Address}</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
+        <BuildingPopup
+          building={selectedBuilding}
+          onClose={() => setShowPopup(false)}
+          onSetStart={handleSetStart}
+          onSetDestination={handleSetDestination}
+        />
       )}
 
-    <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.toggleButton, selectedCampus === "SGW" && styles.selectedCampus]} onPress={() => switchCampuses("SGW")}>
-            <Text style={[
-              styles.toggleButtonText,
-              selectedCampus === "SGW" && styles.selectedButtonText,
-            ]}>SGW</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.toggleButton} onPress={toggleUserLocation}>
-            <Text style={styles.toggleButtonText}>
+      <View style={stylesButtons.container}>
+        <TouchableOpacity style={stylesButtons.hideLocationButton} onPress={toggleUserLocation}>
+          <Text style={stylesButtons.hideLocationButtonText}>
             {showUserLocation ? "Hide My Location" : "Show My Location"}
-            </Text>
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.toggleButton, selectedCampus === "LOY" && styles.selectedCampus]} onPress={() => switchCampuses("LOY")}>
-            <Text style={[
-              styles.toggleButtonText,
-              selectedCampus === "LOY" && styles.selectedButtonText,
-            ]}>LOY</Text>
-        </TouchableOpacity>
-        </View>
+        { startBuilding && destinationBuilding && (
+          <TouchableOpacity style={stylesButtons.navigateButton} onPress={handleNavigate}>
+              <Text style={stylesButtons.navigateButtonText}>Navigate</Text>
+          </TouchableOpacity>
+        )}    
+        
+        <View style={stylesButtons.footer}>
+          <TouchableOpacity style={[stylesButtons.toggleButton, selectedCampus === "SGW" && stylesButtons.selectedCampus]} onPress={() => switchCampuses("SGW")}>
+              <Text style={[
+                stylesButtons.toggleButtonText,
+                selectedCampus === "SGW" && stylesButtons.selectedButtonText,
+              ]}>SGW</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[stylesButtons.toggleButton, selectedCampus === "LOY" && stylesButtons.selectedCampus]} onPress={() => switchCampuses("LOY")}>
+              <Text style={[
+                stylesButtons.toggleButtonText,
+                selectedCampus === "LOY" && stylesButtons.selectedButtonText,
+              ]}>LOY</Text>
+          </TouchableOpacity>
+        </View>  
+      </View>
+
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+  searchContainer: {
+    position: 'absolute',
+    zIndex: 1,
+    top: 12,
+    left: 10,
+    right: 10,
+    width: '80%',
   },
-  popupContainer: {
-    position: "absolute",
-    top: "30%",
-    left: "10%",
-    width: "80%",
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+  searchBar: {
+    shadowColor: '#000',
+    shadowRadius: 8,
+    borderRadius: 8,
     elevation: 5,
+    borderWidth: 1,
   },
-  popupTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#a33",
-    marginBottom: 10,
-  },
-  popupText: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 2,
-  },
-  closeButton: {
-    marginTop: 10,
-    backgroundColor: "#912338",
-    paddingVertical: 8,
-    borderRadius: 5,
+});
+
+const stylesButtons = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-end",
     alignItems: "center",
   },
-  closeButtonText: {
-    color: "white",
-    fontSize: 14,
+  hideLocationButton: {
+    position: "absolute",
+    top: 70,
+    right: 10,
+    width: 135,
+    backgroundColor: "#912338",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  hideLocationButtonText: {
+    color: "#FFF",
+    fontSize: 10,
     fontWeight: "bold",
   },
-  buttonContainer: {
-      position: "absolute",
-      bottom: 20,
-      left: 0,
-      right: 0,
-      flexDirection: "row",
-      justifyContent: "space-around",
-      alignItems: "center",
-      paddingHorizontal: 20,
+  navigateButton: {
+    backgroundColor: "#912338",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: "center",
+  },
+  navigateButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#FFF",
+    width: "100%",
+    borderTopWidth: 3,
+    borderColor: "#912338",
   },
   toggleButton: {
-      backgroundColor: "#912338",
-      paddingVertical: 10,
-      paddingHorizontal: 15,
-      borderRadius: 5,
-      borderWidth: 4,
-      borderColor: "#912338",
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
   },
   toggleButtonText: {
-      color: "white",
-      fontSize: 14,
-      fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#912338",
   },
   selectedCampus: {
-      backgroundColor: "#FFF",
-      borderWidth: 4,
-      borderColor: "#912338",
+    backgroundColor: "#912338",
   },
   selectedButtonText: {
-      color: "#912338",
+    color: "#fff",
   },
 });
 

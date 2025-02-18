@@ -6,19 +6,6 @@ export default function Index() {
     <View style={styles.view}>
       <Pressable 
         style={styles.button}
-        onPress={() => router.push("/SGW_Map")}
-      >
-        <Text style={styles.buttonText}>Link to SGW</Text>
-      </Pressable>
-      <Pressable 
-        style={styles.button}
-        onPress={() => router.push("/Loyola_Map")}
-      >
-        <Text style={styles.buttonText}>Link to LOY</Text>
-      </Pressable>
-
-      <Pressable 
-        style={styles.button}
         onPress={() => router.push("/CampusMap")}
       >
         <Text style={styles.buttonText}>Campus Map</Text>
