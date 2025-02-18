@@ -74,6 +74,28 @@ export default function SGW_Map() {
   };
 
   const mapRef = useRef<MapView>(null);
+  const [selectedCampus, setSelectedCampus] = useState("SGW");
+    const switchCampuses = (campus: string) => {
+      setSelectedCampus(campus);
+      const region = 
+          campus === "SGW"
+              ? {
+                  latitude: 45.4978,
+                  longitude: -73.5795,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+              }
+              : {
+                  latitude: 45.45789,
+                  longitude: -73.63996,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+              };
+      if (mapRef.current) {
+          mapRef.current.animateToRegion(region, 1000);
+      }
+      return () => {};
+    };
 
   useEffect(() => {
     if (startBuilding) {
@@ -148,12 +170,13 @@ export default function SGW_Map() {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: 45.497222,
-          longitude: -73.579056,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
+          latitude: 45.4978,
+          longitude: -73.5795,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
         }}
         showsUserLocation={showUserLocation}
+        followsUserLocation={false}
       >
         {buildings.map((building, index) => renderBuilding(building, index))}
 
@@ -195,19 +218,37 @@ export default function SGW_Map() {
         />
       )}
 
-      {/* Toggle user location */}
-      <TouchableOpacity style={styles.toggleButton} onPress={toggleUserLocation}>
-        <Text style={styles.toggleButtonText}>
-          {showUserLocation ? "Hide My Location" : "Show My Location"}
-        </Text>
-      </TouchableOpacity>
-
-      {/* "Navigate" button if both start & destination selected */}
-      {startBuilding && destinationBuilding && (
-        <TouchableOpacity style={styles.navigateButton} onPress={handleNavigate}>
-          <Text style={styles.navigateButtonText}>Navigate</Text>
+      <View style={stylesButtons.container}>
+        <TouchableOpacity style={stylesButtons.hideLocationButton} onPress={toggleUserLocation}>
+          <Text style={stylesButtons.hideLocationButtonText}>
+            {showUserLocation ? "Hide My Location" : "Show My Location"}
+          </Text>
         </TouchableOpacity>
-      )}
+
+        { startBuilding && destinationBuilding && (
+          <TouchableOpacity style={stylesButtons.navigateButton} onPress={handleNavigate}>
+              <Text style={stylesButtons.navigateButtonText}>Navigate</Text>
+          </TouchableOpacity>
+        )}    
+        
+        <View style={stylesButtons.footer}>
+          <TouchableOpacity style={[stylesButtons.toggleButton, selectedCampus === "SGW" && stylesButtons.selectedCampus]} onPress={() => switchCampuses("SGW")}>
+              <Text style={[
+                stylesButtons.toggleButtonText,
+                selectedCampus === "SGW" && stylesButtons.selectedButtonText,
+              ]}>SGW</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[stylesButtons.toggleButton, selectedCampus === "LOY" && stylesButtons.selectedCampus]} onPress={() => switchCampuses("LOY")}>
+              <Text style={[
+                stylesButtons.toggleButtonText,
+                selectedCampus === "LOY" && stylesButtons.selectedButtonText,
+              ]}>LOY</Text>
+          </TouchableOpacity>
+        </View>  
+      </View>
+
+
     </View>
   );
 }
@@ -219,53 +260,81 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: 'absolute',
+    zIndex: 1,
     top: 12,
     left: 10,
     right: 10,
-    // zIndex: 1,
     width: '80%',
   },
   searchBar: {
     shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.25,
     shadowRadius: 8,
     borderRadius: 8,
     elevation: 5,
+    borderWidth: 1,
   },
-  toggleButton: {
+});
+
+const stylesButtons = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  hideLocationButton: {
     position: "absolute",
-    bottom: 80,
-    left: "50%",
-    transform: [{ translateX: -75 }],
+    top: 70,
+    right: 10,
+    width: 135,
     backgroundColor: "#912338",
-    padding: 10,
-    borderRadius: 5,
-    zIndex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: "center",
+    alignItems: "center",
   },
-  toggleButtonText: {
-    color: "white",
-    fontSize: 14,
+  hideLocationButtonText: {
+    color: "#FFF",
+    fontSize: 10,
     fontWeight: "bold",
   },
   navigateButton: {
-    position: "absolute",
-    bottom: 20,
-    left: "42.5%",
-    transform: [{ translateX: -45 }],
     backgroundColor: "#912338",
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 5,
-    zIndex: 1,
-    width: 130,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginBottom: 20,
+    alignSelf: "center",
   },
   navigateButtonText: {
-    color: "white",
-    fontSize: 14,
+    color: "#FFF",
+    fontSize: 16,
     fontWeight: "bold",
   },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#FFF",
+    width: "100%",
+    borderTopWidth: 3,
+    borderColor: "#912338",
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  toggleButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#912338",
+  },
+  selectedCampus: {
+    backgroundColor: "#912338",
+  },
+  selectedButtonText: {
+    color: "#fff",
+  },
 });
+
