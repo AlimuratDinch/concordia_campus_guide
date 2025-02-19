@@ -1,0 +1,301 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CampusMap renders without crashing (snapshot) 1`] = `
+<View
+  style={
+    {
+      "flex": 1,
+    }
+  }
+>
+  <MapView
+    followsUserLocation={false}
+    initialRegion={
+      {
+        "latitude": 45.4978,
+        "latitudeDelta": 0.01,
+        "longitude": -73.5795,
+        "longitudeDelta": 0.01,
+      }
+    }
+    provider="PROVIDER_GOOGLE"
+    showsUserLocation={true}
+    style={
+      {
+        "bottom": 0,
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+        "top": 0,
+      }
+    }
+  >
+    <Polygon
+      coordinates={
+        [
+          {
+            "latitude": 1,
+            "longitude": 1,
+          },
+        ]
+      }
+      fillColor="red"
+      onPress={[Function]}
+      strokeColor="black"
+      strokeWidth={2}
+      tappable={true}
+      testID="polygon-0"
+    />
+    <Polygon
+      coordinates={
+        [
+          {
+            "latitude": 2,
+            "longitude": 2,
+          },
+        ]
+      }
+      fillColor="blue"
+      onPress={[Function]}
+      strokeColor="black"
+      strokeWidth={2}
+      tappable={true}
+      testID="polygon-1"
+    />
+  </MapView>
+  <View
+    style={
+      {
+        "left": 10,
+        "position": "absolute",
+        "right": 10,
+        "top": 12,
+        "width": "80%",
+        "zIndex": 1,
+      }
+    }
+  >
+    <View
+      style={
+        [
+          {
+            "width": "100%",
+          },
+          {
+            "borderRadius": 8,
+            "borderWidth": 1,
+            "elevation": 5,
+            "shadowColor": "#000",
+            "shadowRadius": 8,
+          },
+        ]
+      }
+    >
+      <TextInput
+        onChangeText={[Function]}
+        placeholder="Search buildings..."
+        placeholderTextColor="#666"
+        style={
+          {
+            "backgroundColor": "white",
+            "borderColor": "#ddd",
+            "borderRadius": 8,
+            "borderWidth": 1,
+            "fontSize": 16,
+            "height": 50,
+            "paddingHorizontal": 12,
+          }
+        }
+        value=""
+      />
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "flex": 1,
+        "justifyContent": "flex-end",
+      }
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "alignItems": "center",
+          "alignSelf": "center",
+          "backgroundColor": "#912338",
+          "borderRadius": 8,
+          "marginBottom": 20,
+          "opacity": 1,
+          "paddingHorizontal": 24,
+          "paddingVertical": 12,
+          "position": "absolute",
+          "right": 10,
+          "top": 70,
+          "width": 135,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#FFF",
+            "fontSize": 10,
+            "fontWeight": "bold",
+          }
+        }
+      >
+        Hide My Location
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "backgroundColor": "#FFF",
+          "borderColor": "#912338",
+          "borderTopWidth": 3,
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": "100%",
+        }
+      }
+    >
+      <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "#912338",
+            "flex": 1,
+            "opacity": 1,
+            "paddingVertical": 12,
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "color": "#912338",
+                "fontSize": 16,
+                "fontWeight": "bold",
+              },
+              {
+                "color": "#fff",
+              },
+            ]
+          }
+        >
+          SGW
+        </Text>
+      </View>
+      <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "opacity": 1,
+            "paddingVertical": 12,
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "color": "#912338",
+                "fontSize": 16,
+                "fontWeight": "bold",
+              },
+              false,
+            ]
+          }
+        >
+          LOY
+        </Text>
+      </View>
+    </View>
+  </View>
+</View>
+`;

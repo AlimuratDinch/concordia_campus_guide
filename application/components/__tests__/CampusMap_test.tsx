@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Linking } from 'react-native';
-import SGW_Map from '../../app/SGW_Map';
+import CampusMap from '../../app/CampusMap';
 
 // Mock building data
 jest.mock('../../app/utils/useBuildings', () => ({
@@ -37,19 +37,19 @@ jest.mock('react-native-maps', () => {
   };
 });
 
-describe('SGW_Map', () => {
+describe('CampusMap', () => {
   it('renders without crashing (snapshot)', () => {
-    const { toJSON } = render(<SGW_Map />);
+    const { toJSON } = render(<CampusMap />);
     expect(toJSON()).toMatchSnapshot();
   });
 
   it('displays the search bar', () => {
-    const { getByPlaceholderText } = render(<SGW_Map />);
+    const { getByPlaceholderText } = render(<CampusMap />);
     expect(getByPlaceholderText('Search buildings...')).toBeTruthy();
   });
 
   it('toggles user location visibility when button is pressed', async () => {
-    const { getByText } = render(<SGW_Map />);
+    const { getByText } = render(<CampusMap />);
 
     // Initially should show "Hide My Location"
     const toggleButton = getByText('Hide My Location');
@@ -64,7 +64,7 @@ describe('SGW_Map', () => {
   });
 
   it('opens the popup when the first polygon is pressed', async () => {
-    const { getByText, getByTestId } = render(<SGW_Map />);
+    const { getByText, getByTestId } = render(<CampusMap />);
 
     // Press the first polygon (testID="polygon-0")
     const firstPolygon = getByTestId('polygon-0');
@@ -77,7 +77,7 @@ describe('SGW_Map', () => {
   });
 
   it('sets the selected building as start building', async () => {
-    const { getByText, getAllByTestId } = render(<SGW_Map />);
+    const { getByText, getAllByTestId } = render(<CampusMap />);
 
     // Tap the first polygon (which is the Start Building)
     const polygons = getAllByTestId(/polygon-/);
@@ -94,7 +94,7 @@ describe('SGW_Map', () => {
   });
 
   it('shows "Navigate" button once start & destination are set', async () => {
-    const { getAllByTestId, getByText } = render(<SGW_Map />);
+    const { getAllByTestId, getByText } = render(<CampusMap />);
 
     // Two polygons: polygon-0 (Start), polygon-1 (Destination)
     const polygons = getAllByTestId(/polygon-/);
@@ -120,7 +120,7 @@ describe('SGW_Map', () => {
       .spyOn(Linking, 'openURL')
       .mockImplementation(() => Promise.resolve());
 
-    const { getAllByTestId, getByText } = render(<SGW_Map />);
+    const { getAllByTestId, getByText } = render(<CampusMap />);
 
     // Press polygons to set start/destination
     const polygons = getAllByTestId(/polygon-/);

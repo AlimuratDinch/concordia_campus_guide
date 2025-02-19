@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   popupTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#a33",
+    color: "#912338",
     marginBottom: 10,
   },
   popupText: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: "#a33",
+    backgroundColor: "#912338",
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 5,
