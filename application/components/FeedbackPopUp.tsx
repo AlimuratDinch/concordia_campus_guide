@@ -12,7 +12,7 @@ const FeedbackPopUp: React.FC<FeedbackPopUpProps> = ({ visible, onClose }) => {
       onClose(); // Close the popup after opening the link
     };
   return (
-    <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
+    <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.popup}>
           <Text style={styles.popupText}>We value your feedback!</Text>
