@@ -1,7 +1,10 @@
+import React, { useState } from "react";
 import { router } from "expo-router";
 import { Text, Pressable, View, StyleSheet } from "react-native";
+import FeedbackPopUp from "../components/FeedbackPopUp";
 
 export default function Index() {
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
   return (
     <View style={styles.view}>
       <Pressable 
@@ -10,7 +13,16 @@ export default function Index() {
       >
         <Text style={styles.buttonText}>Campus Map</Text>
       </Pressable>
+      <Pressable 
+        style={styles.button}
+        onPress={() => setIsFeedbackVisible(true)}
+      >
+        <Text style={styles.buttonText}>Leave Feedback</Text>
+        
+      </Pressable>
+      <FeedbackPopUp visible={isFeedbackVisible} onClose={() => setIsFeedbackVisible(false)} />
     </View>
+    
   );
 }
 
