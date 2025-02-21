@@ -20,6 +20,14 @@ export default function Index() {
         <Text style={styles.buttonText}>Leave Feedback</Text>
         
       </Pressable>
+      <Pressable 
+        style={styles.button}
+        onPress={() => router.push("/LoginPage")}
+      >
+        <Text style={styles.buttonText}>Login</Text>
+        
+      </Pressable>
+
       <FeedbackPopUp visible={isFeedbackVisible} onClose={() => setIsFeedbackVisible(false)} />
     </View>
     
