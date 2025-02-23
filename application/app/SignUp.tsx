@@ -2,22 +2,17 @@ import React, { useState } from "react";
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-export default function LoginScreen() {
+export default function SignUpScreen({ navigation }: any) {
   const [netname, setNetname] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  //check if netname and password are "ADMIN"
-  const handleSignIn = () => {
-    if (netname === "ADMIN" && password === "ADMIN") {
-      router.push("/menu");
-    }
-  };
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   return (
     <View style={styles.container}>
       <Image source={require("../assets/images/concordia-logo.jpg")} style={styles.logo} />
 
-      <Text style={styles.welcomeText}>Welcome to Concordia Campus Guide</Text>
+      <Text style={styles.welcomeText}>Create Your Account</Text>
 
       <View style={styles.formContainer}>
         <TextInput
@@ -29,25 +24,37 @@ export default function LoginScreen() {
 
         <TextInput
           style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+
+        <TextInput
+          style={styles.input}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
 
-        <TouchableOpacity
-          style={styles.signInButton}
-          onPress={handleSignIn}
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity 
+          style={styles.signUpButton} 
+          onPress={() => console.log("TEMPORARY: Sign Up button clicked")}
         >
-          <Text style={styles.signInText}>Sign In</Text>
+          <Text style={styles.signUpText}>Sign Up (WIP)</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => console.log("TEMPORARY: Forgot Password?")}>
-          <Text style={styles.link}>Forgot password? (WIP)</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push("/SignUp")}>
-          <Text style={styles.link}>New student? Activate your account</Text>
+        <TouchableOpacity onPress={() => router.push("/")}>
+          <Text style={styles.link}>Already have an account? Sign In</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -73,7 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     marginBottom: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   formContainer: {
     backgroundColor: "white",
@@ -92,7 +99,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
-  signInButton: {
+  signUpButton: {
     backgroundColor: "black",
     paddingVertical: 10,
     width: "100%",
@@ -100,7 +107,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
   },
-  signInText: {
+  signUpText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
@@ -109,5 +116,5 @@ const styles = StyleSheet.create({
     color: "blue",
     marginTop: 10,
     textDecorationLine: "underline",
-  }
+  },
 });
