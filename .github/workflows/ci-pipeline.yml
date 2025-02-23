@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: application
-        run: npm install
+        run: npm ci --legacy-peer-deps
 
       - name: Check TypeScript
         working-directory: application
@@ -50,4 +50,3 @@ jobs:
           files: application/coverage/*.json
           flags: unittests
           fail_ci_if_error: true
-
