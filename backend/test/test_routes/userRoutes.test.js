@@ -42,6 +42,41 @@ describe('User Routes', () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
   });
 
+///////////////////
+
+
+it('should fail sign in with incorrect password', async () => {
+  const testUserEmail = 'testuser@example.com';
+  const response = await request(app)
+    .post('/user/signin')
+    .send({
+      email: testUserEmail,
+      password: 'wrongpassword' // Incorrect password
+    });
+
+  expect(response.status).toBe(401);
+  expect(response.body.message).toBe('Invalid password');
+});
+
+it('should fail sign in for non-existing user in db', async () => {
+  const response = await request(app)
+    .post('/user/signin')
+    .send({
+      email: 'nonexistentuser@example.com',  //not exist
+      password: 'testpassword'
+    });
+
+  expect(response.status).toBe(404);
+  expect(response.body.message).toBe('User not found');
+});
+
+
+
+
+
+
+
+////////////////////
   it('should delete a user', async () => {
     const response = await request(app)
       .delete(`/user/remove/${testUserId}`); // Adjust the path to match the actual route
@@ -49,4 +84,10 @@ describe('User Routes', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('User deleted successfully');
   });
+
+////////
+
+
+////////
 });
+
