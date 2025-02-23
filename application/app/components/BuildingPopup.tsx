@@ -9,14 +9,12 @@ import {
   StyleSheet,
 } from "react-native";
 
-// Define the Building interface (adjust properties as needed)
 interface Building {
   BuildingName: string;
   "Building Long Name": string;
   Address: string;
 }
 
-// Define the props for the popup component
 interface BuildingPopupProps {
   building: Building;
   onClose: () => void;
