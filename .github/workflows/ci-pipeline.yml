@@ -27,6 +27,12 @@ jobs:
         working-directory: application
         run: npm ci --legacy-peer-deps
 
+      - name: Install additional Babel dependencies
+        working-directory: application
+        run: |
+          npm install -D react-native-dotenv
+          npm install --save-dev metro-react-native-babel-preset
+
       - name: Check TypeScript
         working-directory: application
         run: npm run type-check && echo "✅ TypeScript check passed!"
