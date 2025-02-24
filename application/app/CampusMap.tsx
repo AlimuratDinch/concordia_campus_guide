@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from "react";
 
-
+import {API_KEY} from '@env';
 import {
   StyleSheet,
   View,
@@ -191,8 +192,8 @@ export default function CampusMap() {
       return;
     }
 
-    const apiKey = process.env.API_KEY;
-    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&mode=walking&key=${apiKey}`;
+    
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&mode=walking&key=${API_KEY}`;
 
     try {
       const response = await fetch(url);
@@ -580,4 +581,3 @@ const stylesButtons = StyleSheet.create({
     color: "#fff",
   },
 });
-

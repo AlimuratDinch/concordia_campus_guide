@@ -1,10 +1,13 @@
-module.exports = function(api) {
-    api.cache(true);
+module.exports = {
+    presets: ['module:metro-react-native-babel-preset'],
   
-    return {
-      presets: ['babel-preset-expo'],
-      plugins: [
-        'transform-inline-environment-variables',
+    plugins: [
+      [
+        'module:react-native-dotenv',
+        {
+          moduleName: '@env',
+          path: '.env',
+        },
       ],
-    };
+    ],
   };
