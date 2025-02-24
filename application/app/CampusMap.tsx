@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+
+
 import {
   StyleSheet,
   View,
@@ -189,8 +191,7 @@ export default function CampusMap() {
       return;
     }
 
-    // ***make sure to replace api key here, I will add a function to retreive api key from env file later
-    const apiKey = "PASTE API KEY HERE";
+    const apiKey = process.env.API_KEY;
     const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&mode=walking&key=${apiKey}`;
 
     try {
