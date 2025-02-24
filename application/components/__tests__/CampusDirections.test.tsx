@@ -1,8 +1,23 @@
+// Set up a mock for the @env module
+jest.mock('@env', () => ({
+  API_KEY: 'DUMMY_API_KEY'
+}));
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      API_KEY: string;
+    }
+  }
+}
+
+global.API_KEY = 'DUMMY_API_KEY';
+
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CampusMap from '../../app/CampusMap';
 
-// Use the provided building data in our mock for useBuildings (i used first 2 in our csv files H and B buildings)
+// Use the provided building data in our mock for useBuildings.
 jest.mock('../../app/utils/useBuildings', () => ({
   useBuildings: jest.fn(() => [
     {
@@ -12,7 +27,7 @@ jest.mock('../../app/utils/useBuildings', () => ({
       BuildingName: "B Building",
       "Building Long Name": "B Annex",
       Address: "2160 Bishop Street",
-      // Repeat the coordinate pair so that the component’s helper
+      // Repeat the coordinate pair so that the component’s helper works
       Latitude_Longitude_Points: "45.497856,-73.579588;45.497856,-73.579588",
       color: "red",
       strokeColor: "black",
@@ -43,7 +58,6 @@ jest.mock('react-native-maps', () => {
     PROVIDER_GOOGLE: 'PROVIDER_GOOGLE',
   };
 });
-
 
 describe('CampusMap Directions Feature', () => {
   it('shows the "Directions" button once both start and destination are set', async () => {
@@ -76,7 +90,7 @@ describe('CampusMap Directions Feature', () => {
                 legs: [
                   {
                     steps: [
-                      { html_instructions: "Turn left" },
+                      { html_instructions: "1. Turn left" },
                       { html_instructions: "Turn right" },
                     ],
                   },
@@ -110,7 +124,7 @@ describe('CampusMap Directions Feature', () => {
   });
 
   it('cancels in-app navigation when "Cancel Navigation" is pressed', async () => {
-    // mocking a successful directions API response
+    // Mock a successful response from the Directions API.
     global.fetch = jest.fn(() =>
       Promise.resolve({
         json: () =>
@@ -122,7 +136,7 @@ describe('CampusMap Directions Feature', () => {
                 legs: [
                   {
                     steps: [
-                      { html_instructions: "Turn left" },
+                      { html_instructions: "1. Turn left" },
                       { html_instructions: "Turn right" },
                     ],
                   },
@@ -142,14 +156,14 @@ describe('CampusMap Directions Feature', () => {
     fireEvent.press(polygons[1]);
     fireEvent.press(getByText('Set as Destination'));
 
-    // Press the Directions button to display the route and instructions on the scrren with no directions to google maps app
+    // Press the Directions button to display the route and instructions.
     fireEvent.press(getByText('Directions'));
     await waitFor(() => {
       expect(getByText(/1\. Turn left/)).toBeTruthy();
       expect(getByText('Cancel Navigation')).toBeTruthy();
     });
 
-    // Press "Cancel Navigation" to clear the route/instructions to actually go back to searching routes
+    // Press "Cancel Navigation" to clear the route/instructions.
     fireEvent.press(getByText('Cancel Navigation'));
     await waitFor(() => {
       expect(queryByText(/Turn left/)).toBeNull();
