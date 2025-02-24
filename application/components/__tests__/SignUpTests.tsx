@@ -40,9 +40,7 @@ describe("SignUpScreen", () => {
 
   it("navigates to login screen after successful sign up", async () => {
     const mockNavigation = { navigate: jest.fn() };
-    const { getByPlaceholderText, getByText } = render(
-      <SignUpScreen navigation={mockNavigation} />
-    );
+    const { getByPlaceholderText, getByText } = render(<SignUpScreen />);
 
     //simulate filling form
     fireEvent.changeText(getByPlaceholderText("Netname"), "newUser");
@@ -57,4 +55,19 @@ describe("SignUpScreen", () => {
       expect(router.push).toHaveBeenCalledWith("/");
     });
   });
+
+  it("navigates to the login screen when 'Already have an account? Sign In' is pressed", async () => {
+    const { getByText } = render(<SignUpScreen />);
+
+    //check 'Already have an account? Sign In' text
+    const signInButton = getByText("Already have an account? Sign In");
+
+    //simulate press on link
+    fireEvent.press(signInButton);
+
+    //check router.push call
+    await waitFor(() => {
+      expect(router.push).toHaveBeenCalledWith("/");
+    });
+});
 });
