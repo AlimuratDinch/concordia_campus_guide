@@ -1,3 +1,5 @@
+// app/utils/coordinateHelpers.tsx
+
 export interface Building {
   BuildingName: string;
   "Building Long Name": string;
@@ -14,13 +16,31 @@ export interface Coordinate {
 
 /**
  * Parses a building's coordinate string into an array of coordinates.
+ * Supports two formats:
+ * 1. Legacy format with parentheses: "[(1,1)]" (or multiple pairs)
+ * 2. Custom format: "lat,lng;lat,lng;..."
  */
 export const parseCoordinates = (coordinateString: string): Coordinate[] => {
   try {
-    const parsed = JSON.parse(
-      coordinateString.replace(/\(/g, "[").replace(/\)/g, "]")
-    ) as [number, number][];
-    return parsed.map(([latitude, longitude]) => ({ latitude, longitude }));
+    // Check if the string contains "(" or ")" indicating a legacy format.
+    if (coordinateString.includes('(') || coordinateString.includes(')')) {
+      // Replace parentheses with square brackets and parse as JSON.
+      const normalized = coordinateString.replace(/\(/g, "[").replace(/\)/g, "]");
+      const parsed = JSON.parse(normalized) as [number, number][];
+      return parsed.map(([latitude, longitude]) => ({ latitude, longitude }));
+    } else {
+      // Custom format: split by semicolon, then by comma.
+      const pairs = coordinateString.split(';').filter(pair => pair.trim() !== '');
+      return pairs.map(pair => {
+        const [latStr, lngStr] = pair.split(',');
+        const latitude = parseFloat(latStr.trim());
+        const longitude = parseFloat(lngStr.trim());
+        if (isNaN(latitude) || isNaN(longitude)) {
+          throw new Error(`Invalid coordinate pair: ${pair}`);
+        }
+        return { latitude, longitude };
+      });
+    }
   } catch (error) {
     console.error("Error parsing coordinate string", error);
     return [];
@@ -29,7 +49,6 @@ export const parseCoordinates = (coordinateString: string): Coordinate[] => {
 
 export const mapCoordinates = (coordinateString: string): Coordinate[] =>
   parseCoordinates(coordinateString);
-
 
 /**
  * Computes the center point from an array of coordinates.
