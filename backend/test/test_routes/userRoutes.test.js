@@ -2,6 +2,7 @@ const request = require('supertest');
 const express = require('express');
 const userRoutes = require('../../routes/userRoutes');
 const app = express();
+const generatePassword = require('../../routes/function');
 
 // Setup middleware and routes for testing
 app.use(express.json());
@@ -51,7 +52,7 @@ it('should fail sign in with incorrect password', async () => {
     .post('/user/signin')
     .send({
       email: testUserEmail,
-      password: 'wrongpassword' // Incorrect password
+      password: generatePassword() // Incorrect password
     });
 
   expect(response.status).toBe(401);
@@ -63,7 +64,7 @@ it('should fail sign in for non-existing user in db', async () => {
     .post('/user/signin')
     .send({
       email: 'nonexistentuser@example.com',  //not exist
-      password: 'testpassword'
+      password: generatePassword()
     });
 
   expect(response.status).toBe(404);

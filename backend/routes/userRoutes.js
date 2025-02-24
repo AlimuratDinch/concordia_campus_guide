@@ -3,7 +3,7 @@ const router = express.Router();
 const supabase = require('../services/supabaseClient');
 const { hashPassword } = require('../security/auth.cjs');
 
-///////////////////
+
 
 // POST route to sign in an existing user
 const bcrypt = require('bcrypt'); 
@@ -48,19 +48,6 @@ router.post('/signin', async (req, res) => {
     res.status(500).json({ message: 'Error signing in', error: err.message });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /////////////////////

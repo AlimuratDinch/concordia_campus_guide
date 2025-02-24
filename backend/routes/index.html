@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In</title>
+  <script src="function.js"></script>
 </head>
 <body>
   <h2>Sign In</h2>
-  <form id="signin-form">
+  <form id="signin">
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required><br><br>
     <label for="password">Password:</label>
@@ -16,70 +17,11 @@
         <br>
 
 
-    <button id="create-user-btn">Create User</button>
+    <button id="createUser">Create User</button>
   </form>
 
-  <script defer>
-///////////
+  <script  src="listen.js" defer >
 
-// Create user when the button is clicked
-document.getElementById('create-user-btn').addEventListener('click', async () => {
-      const userData = {
-        netname: 'hi',
-        name: 'john',
-        email: '1@gmail.com',
-        password: '88'
-      };
-
-      try {
-        // Send POST request 
-        await fetch('http://localhost:3000/user/new', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json', // JSON data
-          },
-          body: JSON.stringify(userData) 
-        });
-
-        
-        console.log('User created successfully!');
-      } catch (error) {
-        
-        console.error('Error creating user:', error);
-      }
-    });
-
-
-
-
-
-////////
-
-      
-    document.getElementById('signin-form').addEventListener('submit', async (event) => {
-      event.preventDefault();  
-
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        const response = await fetch('/user/signin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          alert('Login successful: ' + data.message);
-        } else {
-          alert('Login failed: ' + data.message);
-        }
-      } catch (error) {
-        console.error('Error during login:', error);
-        alert('Login failed: ' + error.message);
-      }
-    });
   </script>
 </body>
 </html>
