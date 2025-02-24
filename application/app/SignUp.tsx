@@ -6,7 +6,6 @@ export default function SignUpScreen({ navigation }: any) {
   const [netname, setNetname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   return (
     <View style={styles.container}>
@@ -38,19 +37,11 @@ export default function SignUpScreen({ navigation }: any) {
           secureTextEntry
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-
         <TouchableOpacity 
           style={styles.signUpButton} 
-          onPress={() => console.log("TEMPORARY: Sign Up button clicked")}
+          onPress={() => router.push("/")}
         >
-          <Text style={styles.signUpText}>Sign Up (WIP)</Text>
+          <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push("/")}>
