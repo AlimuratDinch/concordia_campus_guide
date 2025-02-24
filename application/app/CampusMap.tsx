@@ -204,9 +204,9 @@ export default function CampusMap() {
         setRouteCoordinates(decodedCoords);
 
         // Extract step-by-step instructions
-        const steps = data.routes[0].legs[0].steps.map((step: any) =>
-          step.html_instructions.replace(/<[^>]+>/g, "")
-        );
+      const steps = data.routes[0].legs[0].steps.map((step: any) =>
+          step.html_instructions.replace(/<[^<>]*>/g, "")
+      );
         setNavigationSteps(steps);
         setErrorMsg("");
       } else {
