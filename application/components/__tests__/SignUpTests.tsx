@@ -39,7 +39,6 @@ describe("SignUpScreen", () => {
   });
 
   it("navigates to login screen after successful sign up", async () => {
-    const mockNavigation = { navigate: jest.fn() };
     const { getByPlaceholderText, getByText } = render(<SignUpScreen />);
 
     //simulate filling form
