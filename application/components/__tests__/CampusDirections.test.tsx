@@ -11,8 +11,7 @@ declare global {
   }
 }
 
-global.API_KEY = 'DUMMY_API_KEY';
-
+(global as any).API_KEY = 'DUMMY_API_KEY';
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CampusMap from '../../app/CampusMap';
