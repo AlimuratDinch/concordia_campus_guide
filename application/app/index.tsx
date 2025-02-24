@@ -20,74 +20,67 @@ export default function LoginScreen() {
     }
   };
 
-
   // Google Sign-In with Supabase
-  const handleGoogleSignIn = async () => {
-    try {
-      console.log("Initiating Google Sign-In...");
-  
-      const redirectUri = AuthSession.makeRedirectUri();
-      console.log("Redirect URI:", redirectUri);
-  
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: redirectUri },
-      });
-  
-      if (error) {
-        console.error("Google Sign-In Failed:", error.message);
-        Alert.alert("Google Sign-In Failed", error.message);
-        return;
-      }
-  
-      if (data?.url) {
-        console.log("🌍 Opening Google Authentication URL:", data.url);
-        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUri);
-  
-        if (result.type === "success") {
-          console.log("🎉 Google Authentication Successful! Fetching session...");
-  
-          // **NEW: Fetch session manually**
-          setTimeout(async () => {
-            const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-            console.log("🔍 Session Data:", sessionData);
-            if (sessionError) {
-              console.error("Session Fetch Error:", sessionError.message);
-            }
-  
-            if (sessionData?.session) {
-              console.log("Session Found:", sessionData.session);
-              router.push("/menu");
-            } else {
-              console.warn("No session found. Trying manual user fetch...");
-              const { data: userData, error: userError } = await supabase.auth.getUser();
-  
-              if (userError) {
-                console.error("rror fetching user:", userError.message);
-                Alert.alert("Error fetching user", userError.message);
-              } else {
-                console.log("User Data:", userData);
-                if (userData?.user) {
-                  console.log(" User Email:", userData.user.email);
-                  router.push("/menu");
-                } else {
-                  console.warn(" No user found.");
-                }
-              }
-            }
-          }, 3000); // Wait 3 seconds to allow Supabase to process login
-        } else {
-          console.warn("Google Sign-In was canceled.");
-          Alert.alert("Google Sign-In Canceled");
-        }
-      }
-    } catch (error) {
-      console.error("Unexpected Error:", error);
-      Alert.alert("An unexpected error occurred.");
+ const handleGoogleSignIn = async () => {
+  try {
+    console.log("Initiating Google Sign-In...");
+
+    // Generate a redirect URI for Expo
+    const redirectUri = AuthSession.makeRedirectUri();
+    console.log("Generated Redirect URI:", redirectUri);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: redirectUri,
+      },
+    });
+
+    if (error) {
+      console.error("Google Sign-In Failed:", error.message);
+      Alert.alert("Google Sign-In Failed", error.message);
+      return;
     }
-  };
-  
-  
+
+    console.log("Google Sign-In Data:", data);
+
+    if (data?.url) {
+      console.log("Opening Google Authentication URL:", data.url);
+
+      // Open Google authentication
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUri);
+      console.log("Web Browser Auth Result:", result);
+
+      if (result.type === "success") {
+        console.log("Google Authentication Successful! Fetching session...");
+
+        // Fetch user session after successful sign-in
+        const { data: session, error: sessionError } = await supabase.auth.getSession();
+        
+        console.log("Session Data:", session);
+        console.log("Session Error:", sessionError);
+
+        if (sessionError) {
+          console.error("Session Error:", sessionError.message);
+          Alert.alert("Session Error", sessionError.message);
+        } else if (session?.session) {
+          console.log("User logged in successfully:", session.session.user);
+          console.log("Redirecting to /menu...");
+          router.push("/menu");  // Redirect to menu page after success
+        } else {
+          console.warn("No session found after login.");
+        }
+      } else {
+        console.warn("Google Sign-In was canceled.");
+        Alert.alert("Google Sign-In Canceled");
+      }
+    }
+  } catch (error) {
+    console.error("Unexpected Error:");
+    Alert.alert("Error");
+  }
+};
+
   return (
     <View style={styles.container}>
       <Image source={require("../assets/images/concordia-logo.jpg")} style={styles.logo} />
