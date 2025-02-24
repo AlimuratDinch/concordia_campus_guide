@@ -2,8 +2,20 @@ const request = require('supertest');
 const express = require('express');
 const userRoutes = require('../../routes/userRoutes');
 const app = express();
-const generatePassword = require('../../routes/function');
 
+const crypto = require("crypto");
+
+function generatePassword(length = 8) {
+  const charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let password = "";
+  
+  for (let i = 0; i < length; i++) {
+    const index = crypto.randomInt(0, charset.length);
+    password += charset[index];
+  }
+  
+  return password;
+}
 // Setup middleware and routes for testing
 app.use(express.json());
 app.use('/user', userRoutes);

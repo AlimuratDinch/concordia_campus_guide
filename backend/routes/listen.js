@@ -2,10 +2,10 @@
 // Create user when the button is clicked
 document.getElementById('createUser').addEventListener('click', async () => {
       const userData = {
-        netname: 'zidane_226796',
+        netname: 'zidane_2796',
         name: 'zizou',
-        email: 'zidane9967@gmail.com',
-        password: generatePassword()
+        email: 'zidane67@gmail.com',
+        password: generatePassword()    //Look in the web console for password. 
       };
       console.log(userData);
       try {
