@@ -24,10 +24,10 @@ export default function LoginScreen() {
   // Google Sign-In with Supabase
   const handleGoogleSignIn = async () => {
     try {
-      console.log("🚀 Initiating Google Sign-In...");
+      console.log("Initiating Google Sign-In...");
   
       const redirectUri = AuthSession.makeRedirectUri();
-      console.log("🔗 Redirect URI:", redirectUri);
+      console.log("Redirect URI:", redirectUri);
   
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -35,7 +35,7 @@ export default function LoginScreen() {
       });
   
       if (error) {
-        console.error("❌ Google Sign-In Failed:", error.message);
+        console.error("Google Sign-In Failed:", error.message);
         Alert.alert("Google Sign-In Failed", error.message);
         return;
       }
@@ -52,37 +52,37 @@ export default function LoginScreen() {
             const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
             console.log("🔍 Session Data:", sessionData);
             if (sessionError) {
-              console.error("❌ Session Fetch Error:", sessionError.message);
+              console.error("Session Fetch Error:", sessionError.message);
             }
   
             if (sessionData?.session) {
-              console.log("✅ Session Found:", sessionData.session);
+              console.log("Session Found:", sessionData.session);
               router.push("/menu");
             } else {
-              console.warn("⚠️ No session found. Trying manual user fetch...");
+              console.warn("No session found. Trying manual user fetch...");
               const { data: userData, error: userError } = await supabase.auth.getUser();
   
               if (userError) {
-                console.error("❌ Error fetching user:", userError.message);
+                console.error("rror fetching user:", userError.message);
                 Alert.alert("Error fetching user", userError.message);
               } else {
-                console.log("✅ User Data:", userData);
+                console.log("User Data:", userData);
                 if (userData?.user) {
-                  console.log("📧 User Email:", userData.user.email);
+                  console.log(" User Email:", userData.user.email);
                   router.push("/menu");
                 } else {
-                  console.warn("⚠️ No user found.");
+                  console.warn(" No user found.");
                 }
               }
             }
           }, 3000); // Wait 3 seconds to allow Supabase to process login
         } else {
-          console.warn("❌ Google Sign-In was canceled.");
+          console.warn("Google Sign-In was canceled.");
           Alert.alert("Google Sign-In Canceled");
         }
       }
     } catch (error) {
-      console.error("🚨 Unexpected Error:", error);
+      console.error("Unexpected Error:", error);
       Alert.alert("An unexpected error occurred.");
     }
   };
