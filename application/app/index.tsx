@@ -45,11 +45,14 @@ export default function LoginScreen() {
     console.log("Google Sign-In Data:", data);
 
     if (data?.url) {
-      console.log("Opening Google Authentication URL:", data.url);
+
+
 
       // Open Google authentication
       const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUri);
+
       console.log("Web Browser Auth Result:", result);
+
 
       if (result.type === "success") {
         console.log("Google Authentication Successful! Fetching session...");
