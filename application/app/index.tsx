@@ -1,8 +1,9 @@
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "./lib/supabase";
+import { Session } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 
@@ -54,28 +55,42 @@ export default function LoginScreen() {
       console.log("Web Browser Auth Result:", result);
 
 
-      if (result.type === "success") {
-        console.log("Google Authentication Successful! Fetching session...");
+       if (result.type === "success") {
+         console.log("Google Authentication Successful! Fetching session...");
+         const [session, setSession] = useState<Session | null>(null);
 
-        // Fetch user session after successful sign-in
-        const { data: session, error: sessionError } = await supabase.auth.getSession();
+         useEffect(() => {
+          const getSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();  // Fetch current session
+            setSession(session);
+          };
         
-        console.log("Session Data:", session);
-        console.log("Session Error:", sessionError);
-
-        if (sessionError) {
-          console.error("Session Error:", sessionError.message);
-          Alert.alert("Session Error", sessionError.message);
-        } else if (session?.session) {
-          console.log("User logged in successfully:", session.session.user);
-          console.log("Redirecting to /menu...");
-          router.push("/menu");  // Redirect to menu page after success
-        } else {
-          console.warn("No session found after login.");
+          getSession(); // Set session on mount
+        
+          const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+          });
         }
-      } else {
-        console.warn("Google Sign-In was canceled.");
-        Alert.alert("Google Sign-In Canceled");
+    //     // Fetch user session after successful sign-in
+    //     const { data: session, error: sessionError } = await supabase.auth.getSession();
+        
+    //     console.log("Session Data:", session);
+    //     console.log("Session Error:", sessionError);
+
+    //     if (sessionError) {
+    //       console.error("Session Error:", sessionError.message);
+    //       Alert.alert("Session Error", sessionError.message);
+    //     } else if (session?.session) {
+    //       console.log("User logged in successfully:", session.session.user);
+    //       console.log("Redirecting to /menu...");
+    //       router.push("/menu");  // Redirect to menu page after success
+    //     } else {
+    //       console.warn("No session found after login.");
+    //     }
+    //   } else {
+    //     console.warn("Google Sign-In was canceled.");
+    //     Alert.alert("Google Sign-In Canceled");
+       }
       }
     }
   } catch (error) {
