@@ -1,6 +1,23 @@
 import React, { useState } from "react";
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import { signIn } from "../components/googleSignIn";
+
+const webClientID = "331676000843-0oego79c5gv6jb1rqbkj7sves8rcb6cr.apps.googleusercontent.com";
+// const androidClientID = "331676000843-9qt4f68evla7p3ob5t9fqv6j636loico.apps.googleusercontent.com"; // client 1
+const androidClientID = "331676000843-jpg2rlbnr0pc96n9nudq360atnqvbm2q.apps.googleusercontent.com"; // client 2
+
+GoogleSignin.configure({
+  webClientId: webClientID,
+  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+  offlineAccess: true,
+  forceCodeForRefreshToken: true
+});
 
 export default function LoginScreen() {
   const [netname, setNetname] = useState("");
@@ -41,6 +58,12 @@ export default function LoginScreen() {
         >
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
+
+        <GoogleSigninButton
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Dark}
+          onPress={signIn}
+        />
 
         <TouchableOpacity onPress={() => console.log("TEMPORARY: Forgot Password?")}>
           <Text style={styles.link}>Forgot password? (WIP)</Text>
