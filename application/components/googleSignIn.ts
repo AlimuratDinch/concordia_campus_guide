@@ -8,6 +8,7 @@ import { router } from "expo-router";
   // Somewhere in your code
 export const signIn = async () => {
     try {
+      await GoogleSignin.signOut();
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       console.log(userInfo);
