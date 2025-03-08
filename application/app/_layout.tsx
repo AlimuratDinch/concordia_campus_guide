@@ -9,6 +9,12 @@ export default function RootLayout() {
           headerTitle: "Campus map",
         }}
       />
+      <Stack.Screen 
+        name="LoginPage"
+        options={{
+          headerTitle: "Login",
+        }}
+      />
     </Stack>
   );
 }
