@@ -7,10 +7,10 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import { signIn } from "../components/googleSignIn";
+import { webClientIDVariable } from "./config";
 
-const webClientID = "331676000843-0oego79c5gv6jb1rqbkj7sves8rcb6cr.apps.googleusercontent.com";
-// const androidClientID = "331676000843-9qt4f68evla7p3ob5t9fqv6j636loico.apps.googleusercontent.com"; // client 1
-const androidClientID = "331676000843-jpg2rlbnr0pc96n9nudq360atnqvbm2q.apps.googleusercontent.com"; // client 2
+const webClientID = webClientIDVariable
+console.log(webClientID);
 
 GoogleSignin.configure({
   webClientId: webClientID,
