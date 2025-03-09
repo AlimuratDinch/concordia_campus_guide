@@ -41,7 +41,7 @@ describe('User Routes', () => {
         netname: 'T_User',
         name: 'Test User',
         email: 'testuser@example.com',
-        password: 'testpassword'
+        password: generatePassword()
       });
 
     expect(response.status).toBe(201);
@@ -54,9 +54,6 @@ describe('User Routes', () => {
     // Introduce a delay of 1000ms (1 second) before attempting deletion
     await new Promise(resolve => setTimeout(resolve, 1000));
   });
-
-///////////////////
-
 
 it('should fail sign in with incorrect password', async () => {
   const testUserEmail = 'testuser@example.com';
@@ -89,6 +86,8 @@ it('should fail sign in for non-existing user in db', async () => {
 
 
 
+
+
 ////////////////////
   it('should delete a user', async () => {
     const response = await request(app)
@@ -97,10 +96,5 @@ it('should fail sign in for non-existing user in db', async () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('User deleted successfully');
   });
-
-////////
-
-
-////////
 });
 
