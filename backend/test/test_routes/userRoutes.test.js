@@ -80,6 +80,15 @@ it('should fail sign in for non-existing user in db', async () => {
   expect(response.body.message).toBe('User not found');
 });
 
+
+
+
+
+
+
+
+
+////////////////////
   it('should delete a user', async () => {
     const response = await request(app)
       .delete(`/user/remove/${testUserId}`); // Adjust the path to match the actual route
@@ -87,7 +96,5 @@ it('should fail sign in for non-existing user in db', async () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('User deleted successfully');
   });
-
-
 });
 
