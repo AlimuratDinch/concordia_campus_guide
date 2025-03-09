@@ -3,9 +3,59 @@ const router = express.Router();
 const supabase = require('../services/supabaseClient');
 const { hashPassword } = require('../security/auth.cjs');
 
+
+
+// POST route to sign in an existing user
+const bcrypt = require('bcrypt'); 
+const { createToken } = require('../security/jwtService.cjs'); // Import the createToken function
+
+router.post('/signin', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+
+  try {
+    // Get the user by email from the Supabase database
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, password') 
+      .eq('email', email)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    
+    console.log('Data password: ')
+    console.log(data.password)
+    console.log('Input password')
+    console.log(password)
+    const isPasswordValid = await bcrypt.compare(password, data.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    // Generate a JWT token for each user
+    const token = createToken({ id: data.id, email: data.email });
+
+    res.status(200).json({ message: 'Signed in successfully', token });
+  } catch (err) {
+    console.error('Error signing in:', err);
+    res.status(500).json({ message: 'Error signing in', error: err.message });
+  }
+});
+
+
+/////////////////////
+
 // POST route to save a new user
 router.post('/new', async (req, res) => {
   const { netname, name, email, password } = req.body;
+  console.log('Working')
 
   if (!netname || !name || !email || !password) {
     return res.status(400).json({ message: 'NetName, Name, email, and password are required' });
