@@ -8,6 +8,10 @@ jest.mock('expo-router', () => ({
   },
 }));
 
+jest.mock("@microsoft/react-native-clarity", () => ({
+  initialize: jest.fn(),
+}));
+
 describe('Login', () => {
   it('renders correctly', () => {
     //check placeholders rendered

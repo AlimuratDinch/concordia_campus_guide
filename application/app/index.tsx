@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { initialize } from '@microsoft/react-native-clarity';
+
+initialize("qlbgvblls8");
 
 export default function LoginScreen() {
   const [netname, setNetname] = useState("");
