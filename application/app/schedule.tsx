@@ -9,7 +9,7 @@ export default function Schedule() {
   const timeSlots = Array.from({ length: 24 }, (_, i) => {
     const hour = i;
     const minutes = i % 2 === 0 ? "00" : "30";
-    return `${hour}:${minutes}`; // REVIEW: This creates invalid times like 00:00, which isn't useful.
+    return `${hour}:${minutes}`; 
   });
 
   const getCurrentWeek = () => {
@@ -43,7 +43,7 @@ export default function Schedule() {
       );
 
       const data = await response.json();
-      setEvents(data.items || []); // REVIEW: What if there are no events? The UI should handle empty states.
+      setEvents(data.items || []); 
     } catch (error) {
       console.error("Error fetching calendar events:", error);
     } finally {
@@ -58,7 +58,7 @@ export default function Schedule() {
   return (
     <ScrollView horizontal>
       <View style={styles.container}>
-        {/* REVIEW: Hardcoded background color. Consider using a theme system. */}
+       
         <View style={[styles.header, { backgroundColor: "#912338" }]}> 
           <Text style={styles.month}>{new Date().toLocaleDateString("en-US", { month: "long" })}</Text>
           <View style={styles.weekRow}>
@@ -72,7 +72,7 @@ export default function Schedule() {
         </View>
 
         <View style={styles.schedule}>
-          {/* REVIEW: The time column should be dynamically generated, but instead, it's static. */}
+          
           <View style={styles.timeColumn}>
             {timeSlots.map((time, index) => (
               <View key={index} style={styles.timeSlot}>
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   dayText: { fontSize: 16, fontWeight: "bold" },
   dayName: { fontSize: 12 },
   schedule: { flexDirection: "row" },
-  timeColumn: { width: 50 }, // REVIEW: The width here is too small; times overlap with events.
-  timeSlot: { height: 30 }, // REVIEW: Hardcoded height makes events misaligned.
+  timeColumn: { width: 50 }, 
+  timeSlot: { height: 30 }, 
   timeText: { fontSize: 14 },
   weekContainer: { flexDirection: "row" },
   dayColumn: { width: 100 },
