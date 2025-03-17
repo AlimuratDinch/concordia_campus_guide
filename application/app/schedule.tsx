@@ -6,14 +6,12 @@ export default function Schedule() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // REVIEW: Time slots should start from 8:00 AM, but there's no validation for this.
   const timeSlots = Array.from({ length: 24 }, (_, i) => {
     const hour = i;
     const minutes = i % 2 === 0 ? "00" : "30";
     return `${hour}:${minutes}`; // REVIEW: This creates invalid times like 00:00, which isn't useful.
   });
 
-  // REVIEW: This function assumes the week starts on Monday, but what if the user is in a locale where it starts on Sunday?
   const getCurrentWeek = () => {
     const today = new Date();
     const startOfWeek = new Date(today);
@@ -34,7 +32,6 @@ export default function Schedule() {
 
   const weekDays = getCurrentWeek();
 
-  // REVIEW: There's no error handling here. What if the API request fails?
   const fetchCalendarEvents = async (accessToken) => {
     try {
       console.log("Fetching Google Calendar events...");
