@@ -39,31 +39,42 @@ describe("Schedule Component", () => {
     jest.clearAllMocks();
   });
 
-  it("renders without crashing", () => {
+  it("renders without crashing", async () => {
     const { getByText } = render(<Schedule />);
-    expect(
-      getByText(new Date().toLocaleDateString("en-US", { month: "long" }))
-    ).toBeTruthy();
+    
+    await waitFor(() => {
+      expect(
+        getByText(new Date().toLocaleDateString("en-US", { month: "long" }))
+      ).toBeTruthy();
+    });
   });
 
   it("fetches and displays event data", async () => {
     const { findByText } = render(<Schedule />);
-    expect(await findByText("Test Event")).toBeTruthy();
+    
+    await waitFor(() => {
+      expect(findByText("Test Event")).toBeTruthy();
+    });
   });
 
   it("handles event click to show alert", async () => {
     const alertSpy = jest.spyOn(Alert, "alert");
     const { findByText } = render(<Schedule />);
-    const eventElement = await findByText("Test Event");
+    
+    const eventElement = await waitFor(() => findByText("Test Event"));
 
     fireEvent.press(eventElement);
+    
     expect(alertSpy).toHaveBeenCalledWith("Event Details", expect.stringContaining("Test Event"));
   });
 
-  it("displays time slots", () => {
+  it("displays time slots", async () => {
     const { getByText } = render(<Schedule />);
-    ["8:00", "8:30", "9:00", "9:30", "10:00"].forEach((time) => {
-      expect(getByText(time)).toBeTruthy();
+    
+    await waitFor(() => {
+      ["8:00", "8:30", "9:00", "9:30", "10:00"].forEach((time) => {
+        expect(getByText(time)).toBeTruthy();
+      });
     });
   });
 });
