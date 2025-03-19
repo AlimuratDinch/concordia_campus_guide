@@ -11,7 +11,7 @@
     "android": {
       "config": {
         "googleMaps": {
-          "apiKey": "$(API_KEY)"
+          "apiKey": "AIzaSyBA2gi3E7IVUnWs8uT06Je27OIiggOeLyE"
         }
       },
       "adaptiveIcon": {
@@ -35,7 +35,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
