@@ -11,7 +11,7 @@
     "android": {
       "config": {
         "googleMaps": {
-          "apiKey": "$(API_KEY)"
+          "apiKey": "AIzaSyBA2gi3E7IVUnWs8uT06Je27OIiggOeLyE"
         }
       },
       "adaptiveIcon": {
@@ -41,7 +41,8 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
