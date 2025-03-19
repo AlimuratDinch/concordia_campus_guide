@@ -50,4 +50,3 @@ jobs:
           files: application/coverage/*.json
           flags: unittests
           fail_ci_if_error: true
-
