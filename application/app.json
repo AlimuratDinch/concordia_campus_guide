@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.bu_abd.minicap"
+      "package": "com.bu_abd.minicap_concordia_campus_guide_app"
     },
     "web": {
       "bundler": "metro",
@@ -34,12 +34,6 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
-        }
-      ],
-      [
-        "@react-native-google-signin/google-signin",
-        {
-          "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
         }
       ],
       "expo-font"
