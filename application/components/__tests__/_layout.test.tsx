@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
-import RootLayout from "../RootLayout"; // Adjust path if needed
+import RootLayout from "../app/_layout.tsx"; // Adjust path if needed
 import { Stack } from "expo-router";
 
 jest.mock("expo-router", () => ({
