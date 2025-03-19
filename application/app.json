@@ -1,4 +1,3 @@
-
 {
   "expo": {
     "name": "minicap_concordia_campus_guide_app",
@@ -12,7 +11,7 @@
     "android": {
       "config": {
         "googleMaps": {
-          "apiKey": "${API_KEY}"
+          "apiKey": "AIzaSyBA2gi3E7IVUnWs8uT06Je27OIiggOeLyE"
         }
       },
       "adaptiveIcon": {
@@ -20,11 +19,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.bu_abd.minicap"
-    },
-    "extra": {
-      "API_KEY": "${API_KEY}",
-      "SUPABASE_URL": "${EXPO_PUBLIC_SUPABASE_URL}",
-      "SUPABASE_ANON_KEY": "${EXPO_PUBLIC_SUPABASE_ANON_KEY}"
     },
     "web": {
       "bundler": "metro",
