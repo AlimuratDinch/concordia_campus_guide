@@ -3,19 +3,22 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "rea
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function Schedule() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const timeSlots = Array.from({ length: 24 }, (_, i) => {
-    const hour = i;
+  // PR Review
+  const timeSlots = Array.from({ length: 16 }, (_, i) => {
+    const hour = 8 + Math.floor(i / 2);
     const minutes = i % 2 === 0 ? "00" : "30";
-    return `${hour}:${minutes}`; 
+    return `${hour}:${minutes}`;
   });
 
+  // Get current week's dates
   const getCurrentWeek = () => {
     const today = new Date();
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
     const weekDays = [];
 
     for (let i = 0; i < 7; i++) {
@@ -27,39 +30,89 @@ export default function Schedule() {
         fullDate: date.toISOString(),
       });
     }
+
     return weekDays;
   };
 
   const weekDays = getCurrentWeek();
 
-  const fetchCalendarEvents = async (accessToken) => {
-    try {
-      console.log("Fetching Google Calendar events...");
-      const response = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${weekDays[0].fullDate}&timeMax=${weekDays[6].fullDate}&orderBy=startTime&singleEvents=true`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
+  // Function to fetch calendar events
+interface Event {
+    id: string;
+    summary: string;
+    location?: string;
+    start: {
+        dateTime: string;
+    };
+    end: {
+        dateTime: string;
+    };
+}
 
-      const data = await response.json();
-      setEvents(data.items || []); 
+interface WeekDay {
+    day: string;
+    date: number;
+    fullDate: string;
+}
+
+const fetchCalendarEvents = async (accessToken: string) => {
+    try {
+        console.log("Fetching Google Calendar events...");
+        const response = await fetch(
+            `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(weekDays[0].fullDate)}&timeMax=${encodeURIComponent(weekDays[6].fullDate)}&orderBy=startTime&singleEvents=true`,
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            }
+        );
+        // The resolution for the PR review
+        if (!response.ok) {
+            console.error("Error fetching calendar events");
+            return;
+        }
+
+        const data: { items: Event[] } = await response.json();
+        if (data.items) {
+            setEvents(data.items);
+        }
     } catch (error) {
-      console.error("Error fetching calendar events:", error);
+        console.error("Error fetching calendar events:", error);
     } finally {
+        setLoading(false);
+    }
+};
+
+  // Function to sign in and get events
+  const getAccessTokenAndFetchEvents = async () => {
+    try {
+      const userInfo = await GoogleSignin.signInSilently();
+      if (userInfo) {
+        setIsSignedIn(true);
+        const tokens = await GoogleSignin.getTokens();
+        fetchCalendarEvents(tokens.accessToken);
+      }
+    } catch (error) {
+      console.error("Error signing in:", error);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    GoogleSignin.getTokens().then((tokens) => fetchCalendarEvents(tokens.accessToken));
+    getAccessTokenAndFetchEvents();
   }, []);
+
+  // Convert event time to index position in timeSlots array
+const getEventPosition = (dateTime: string): number => {
+    const eventDate = new Date(dateTime);
+    const hours = eventDate.getHours();
+    const minutes = eventDate.getMinutes();
+    return (hours - 8) * 2 + (minutes >= 30 ? 1 : 0);
+};
 
   return (
     <ScrollView horizontal>
       <View style={styles.container}>
-       
-        <View style={[styles.header, { backgroundColor: "#912338" }]}> 
+        {/* Header with month and dates */}
+        <View style={styles.header}>
           <Text style={styles.month}>{new Date().toLocaleDateString("en-US", { month: "long" })}</Text>
           <View style={styles.weekRow}>
             {weekDays.map((day) => (
@@ -71,8 +124,9 @@ export default function Schedule() {
           </View>
         </View>
 
+        {/* Main Schedule Grid */}
         <View style={styles.schedule}>
-          
+          {/* Time Column */}
           <View style={styles.timeColumn}>
             {timeSlots.map((time, index) => (
               <View key={index} style={styles.timeSlot}>
@@ -81,19 +135,39 @@ export default function Schedule() {
             ))}
           </View>
 
+          {/* Week Column with Events */}
           <ScrollView>
             <View style={styles.weekContainer}>
               {weekDays.map((day, dayIndex) => (
                 <View key={dayIndex} style={styles.dayColumn}>
-                  {events.map((event) => (
-                    <TouchableOpacity
-                      key={event.id}
-                      style={styles.eventBlock}
-                      onPress={() => Alert.alert("Event Details", event.summary)}
-                    >
-                      <Text style={styles.eventText}>{event.summary}</Text>
-                    </TouchableOpacity>
+                  {timeSlots.map((_, slotIndex) => (
+                    <View key={slotIndex} style={styles.timeBlock} />
                   ))}
+
+                  {/* Events */}
+                  {events
+                    .filter((event) => new Date(event.start.dateTime).toDateString() === new Date(day.fullDate).toDateString())
+                    .map((event) => {
+                      const startIndex = getEventPosition(event.start.dateTime);
+                      const endIndex = getEventPosition(event.end.dateTime);
+                      return (
+                        <TouchableOpacity
+                          key={event.id}
+                          style={[
+                            styles.eventBlock,
+                            {
+                              top: startIndex * 40, // Position event vertically
+                              height: (endIndex - startIndex) * 40, // Adjust height based on duration
+                            },
+                          ]}
+                          onPress={() =>
+                            Alert.alert("Event Details", `${event.summary}\n${event.location || "No location"}`)
+                          }
+                        >
+                          <Text style={styles.eventText}>{event.summary}</Text>
+                        </TouchableOpacity>
+                      );
+                    })}
                 </View>
               ))}
             </View>
@@ -105,23 +179,36 @@ export default function Schedule() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexDirection: "column" },
-  header: { padding: 10, alignItems: "center" },
-  month: { fontSize: 20, fontWeight: "bold" },
-  weekRow: { flexDirection: "row", justifyContent: "space-around" },
-  dayBox: { padding: 5 },
-  dayText: { fontSize: 16, fontWeight: "bold" },
-  dayName: { fontSize: 12 },
-  schedule: { flexDirection: "row" },
-  timeColumn: { width: 50 }, 
-  timeSlot: { height: 30 }, 
+  container: { flexDirection: "column", backgroundColor: "#f5f5f5" },
+
+  // Header
+  header: { padding: 10, backgroundColor: "#912338", alignItems: "center" },
+  month: { fontSize: 20, fontWeight: "bold", },
+  weekRow: { flexDirection: "row", justifyContent: "space-around", width: "100%" ,color: "white"},
+  dayBox: { alignItems: "center", padding: 5 },
+  dayText: { fontSize: 16, fontWeight: "bold", color: "white" },
+  dayName: { fontSize: 12, color: "white" },
+
+  // Schedule Grid
+  schedule: { flexDirection: "row", padding: 10 },
+  timeColumn: { width: 60, alignItems: "center" },
+  timeSlot: { height: 40, justifyContent: "center" },
   timeText: { fontSize: 14 },
+
   weekContainer: { flexDirection: "row" },
-  dayColumn: { width: 100 },
+  dayColumn: { width: 90, borderRightWidth: 1, borderColor: "#ccc" },
+  timeBlock: { height: 40, borderBottomWidth: 1, borderColor: "#ccc" },
+
+  // Event Blocks
   eventBlock: {
     position: "absolute",
-    backgroundColor: "green",
+    left: 5,
+    right: 5,
+    backgroundColor: "#388e3c",
+    borderRadius: 5,
     padding: 5,
+    justifyContent: "center",
   },
-  eventText: { color: "white" },
+  eventText: { color: "white", fontSize: 12, textAlign: "center" },
 });
+
