@@ -10,7 +10,7 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen 
-        name="LoginPage"
+        name="index"
         options={{
           headerTitle: "Login",
         }}

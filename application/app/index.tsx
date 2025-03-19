@@ -9,7 +9,7 @@ export default function LoginScreen() {
   //check if netname and password are "ADMIN"
   const handleSignIn = () => {
     if (netname === "ADMIN" && password === "ADMIN") {
-      router.push("/menu");
+      router.push("/home");
     }
   };
 

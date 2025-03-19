@@ -1,6 +1,6 @@
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import { router } from "expo-router";
-import Index from "../../app/menu";
+import Index from "../../app/campus";
 
 jest.mock("expo-router", () => ({
   router: {
