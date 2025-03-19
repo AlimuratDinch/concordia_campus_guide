@@ -30,7 +30,7 @@ jobs:
       - name: Create mock config file
         working-directory: application
         run: |
-          echo "export default {};" > ./app/config.ts
+          echo "export const webClientIDVariable = 'fake-id';" > ./app/config.ts
 
       - name: Check TypeScript
         working-directory: application
