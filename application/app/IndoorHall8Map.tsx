@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import Svg, { G, Circle } from "react-native-svg";
+import Svg, { G, Circle, Text as SvgText } from "react-native-svg";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
 import Hall8 from "../assets/indoorMaps/Hall-8.svg";
@@ -27,18 +27,30 @@ const MapScreen = () => {
     ],
   }));
 
-  // Define nodes for hallways and classrooms
+  // Updated nodes with correct 8th floor IDs and labels
   const nodes = [
-    { id: "H1", type: "hallway", x: 525, y: 300 }, // Central hallway intersection
-    { id: "H2", type: "hallway", x: 525, y: 50 }, // Top of main hallway
-    { id: "H3", type: "hallway", x: 525, y: 550 }, // Bottom of main hallway
-    { id: "H4", type: "hallway", x: 200, y: 300 }, // Left hallway intersection
-    { id: "B01", type: "classroom", x: 50, y: 550 }, // Classroom B01 entrance
-    { id: "B42", type: "classroom", x: 525, y: 350 }, // Classroom B42 entrance
-    { id: "B80", type: "classroom", x: 400, y: 300 }, // Classroom B80 entrance (left side)
-    { id: "B94", type: "classroom", x: 650, y: 300 }, // Classroom B94 entrance (right side)
+    { id: "H1-H2", type: "hallway", x: 555, y: 227 }, // Central hallway intersection 1 with H2
+    { id: "H1-U", type: "hallway", x: 555, y: 120  }, // Upper main hallway
+    { id: "H1-M", type: "hallway", x: 555, y: 500 }, // Middle main hallway
+    { id: "H1-I2", type: "hallway", x: 555, y: 800 }, // Bottom main hallway intersection 2
+    { id: "H2-LC", type: "hallway", x: 185, y: 227 }, // Halway 2 Left Corner
+    { id: "H2-ML", type: "hallway", x: 380, y: 227 }, 
+    { id: "H2-MR", type: "hallway", x: 710, y: 227 }, 
+    { id: "H2-CR", type: "hallway", x: 835, y: 227 }, 
+    { id: "806-01", type: "classroom", x: 490, y: 280 }, 
+    { id: "806-02", type: "classroom", x: 490, y: 318 }, 
+    { id: "806-03", type: "classroom", x: 490, y: 355 }, 
+    { id: "801", type: "classroom", x: 190, y: 170 },
+    { id: "803", type: "classroom", x: 290, y: 170 },
+    { id: "807", type: "classroom", x: 470, y: 170 },
+    { id: "811", type: "classroom", x: 640, y: 170 },
+    { id: "813", type: "classroom", x: 740, y: 170 },
+    { id: "815", type: "classroom", x: 835, y: 170 },
+    { id: "817", type: "classroom", x: 890, y: 170 },
+    { id: "857", type: "classroom", x: 150, y: 550 }, 
+
   ];
-  
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
@@ -46,17 +58,27 @@ const MapScreen = () => {
           <Svg viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet">
             <G>
               <Hall8 />
-              {/* Render nodes as circles */}
+              {/* Render nodes as circles with labels */}
               {nodes.map((node) => (
-                <Circle
-                  key={node.id}
-                  cx={node.x}
-                  cy={node.y}
-                  r={10} // Radius of the circle
-                  fill={node.type === "hallway" ? "blue" : "green"} // Blue for hallway, green for classroom
-                  stroke="black"
-                  strokeWidth={2}
-                />
+                <G key={node.id}>
+                  <Circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={12}
+                    fill={node.type === "hallway" ? "blue" : "green"}
+                    stroke="black"
+                    strokeWidth={2}
+                  />
+                  <SvgText
+                    x={node.x} // Center the text on the node's x-coordinate
+                    y={node.y - 15} // Position above the circle (circle radius is 10, so -15 moves it just above)
+                    fill="black"
+                    fontSize={25}
+                    textAnchor="middle" // Center the text horizontally
+                  >
+                    {node.id}
+                  </SvgText>
+                </G>
               ))}
             </G>
           </Svg>
