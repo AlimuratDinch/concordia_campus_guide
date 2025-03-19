@@ -8,13 +8,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app",
-      "config": {
-        "googleMapsApiKey": "${API_KEY}"
-      }
-    },
     "android": {
       "config": {
         "googleMaps": {
@@ -46,6 +39,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app"
     }
   }
 }
