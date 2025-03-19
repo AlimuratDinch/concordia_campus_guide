@@ -107,13 +107,22 @@ export default function CampusMap() {
 
 
 
- const getLocationPermission = async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert("Permission denied", "We need location permissions to show your location.");
-          return;
+const getLocationPermission = async () => {
+    try {
+        const permission = await Location.requestForegroundPermissionsAsync();
+        if (!permission || !permission.status) {
+            throw new Error("Location permission request failed");
         }
+
+        if (permission.status !== "granted") {
+            Alert.alert("Permission denied", "We need location permissions to show your location.");
+            return;
+        }
+    } catch (error) {
+        console.error("Error requesting location permission:", error);
     }
+};
+
 
   // Toggle user location on the map
   const toggleUserLocation = () => {
