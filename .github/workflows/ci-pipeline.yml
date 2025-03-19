@@ -30,7 +30,7 @@ jobs:
       - name: Create mock config file
         working-directory: application
         run: |
-          echo "module.exports = {};" > ./app/config.ts
+          echo "export default {};" > ./app/config.ts
 
       - name: Check TypeScript
         working-directory: application
