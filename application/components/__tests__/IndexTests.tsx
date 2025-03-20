@@ -12,6 +12,32 @@ jest.mock("@microsoft/react-native-clarity", () => ({
   initialize: jest.fn(),
 }));
 
+jest.mock('@react-native-google-signin/google-signin', () => {
+  const GoogleSigninButton = jest.fn(() => null) as any;
+  GoogleSigninButton.Size = {
+    Standard: 'standard',
+    Icon: 'icon',
+    Wide: 'wide',
+  };
+  GoogleSigninButton.Color = {
+    Light: 'light',
+    Dark: 'dark',
+  };
+  return {
+    GoogleSignin: {
+      configure: jest.fn(),
+      hasPlayServices: jest.fn().mockResolvedValue(true),
+      signIn: jest.fn().mockResolvedValue({
+        idToken: 'test-id-token',
+        user: { name: 'Test User', email: 'test@example.com' },
+      }),
+    },
+    GoogleSigninButton,
+  };
+});
+
+
+
 describe('Login', () => {
   it('renders correctly', () => {
     //check placeholders rendered

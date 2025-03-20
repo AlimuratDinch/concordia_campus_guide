@@ -2,6 +2,19 @@ import React, { useState } from "react";
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { initialize } from '@microsoft/react-native-clarity';
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { signIn } from "../components/googleSignIn";
+import { webClientIDVariable } from "./config";
+
+const webClientID = webClientIDVariable
+console.log(webClientID);
+
+GoogleSignin.configure({
+  webClientId: webClientID,
+  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+  offlineAccess: true,
+  forceCodeForRefreshToken: true
+});
 
 initialize("qlbgvblls8");
 
@@ -44,6 +57,12 @@ export default function LoginScreen() {
         >
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
+
+        <GoogleSigninButton
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Dark}
+          onPress={signIn}
+        />
 
         <TouchableOpacity onPress={() => console.log("TEMPORARY: Forgot Password?")}>
           <Text style={styles.link}>Forgot password? (WIP)</Text>
