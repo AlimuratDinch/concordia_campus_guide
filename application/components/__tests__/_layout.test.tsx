@@ -1,19 +1,21 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
-import RootLayout from "../app/_layout";
-import { Stack } from "expo-router";
+import React from 'react';
+import { render, screen } from '@testing-library/react-native';
+import RootLayout from '../../app/_Layout';
 
-jest.mock("expo-router", () => ({
-  Stack: jest.fn(({ children }) => <>{children}</>),
-  StackScreen: jest.fn(({ children }) => <>{children}</>),
+// Mock the Stack component from expo-router
+jest.mock('expo-router', () => ({
+  Stack: jest.fn(({ children }) => <>{children}</>), // Mock Stack to simply render its children for testing
 }));
 
-describe("RootLayout", () => {
-  it("renders the Stack with two screens", () => {
-    const { getByText } = render(<RootLayout />);
+it('should render the screens in the RootLayout', async () => {
+  // Render the RootLayout component
+  render(<RootLayout />);
 
-    // Verify screen headers (titles)
-    expect(getByText("Campus map")).toBeTruthy();
-    expect(getByText("Login")).toBeTruthy();
-  });
+  // Check that the screen titles appear in the document
+  const campusMapHeader = screen.getByText('Campus map');
+  const loginPageHeader = screen.getByText('Login');
+
+  // Expect the headers to be rendered
+  expect(campusMapHeader).toBeTruthy(); // Use `toBeTruthy()` to check for existence
+  expect(loginPageHeader).toBeTruthy(); // Use `toBeTruthy()` to check for existence
 });
