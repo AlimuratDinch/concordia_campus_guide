@@ -14,7 +14,9 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "setupFiles": ["<rootDir>/jest.setup.js"],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
     "collectCoverage": true,
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
