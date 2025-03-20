@@ -77,7 +77,7 @@ export default function CampusMap() {
   const [selectedCampus, setSelectedCampus] = useState("SGW");
     const switchCampuses = (campus: string) => {
       setSelectedCampus(campus);
-      const region = 
+      const region =
           campus === "SGW"
               ? {
                   latitude: 45.4978,
@@ -100,10 +100,30 @@ export default function CampusMap() {
   useEffect(() => {
     if (startBuilding) {
       centerMapOnBuilding(startBuilding);
+      getLocationPermission();
     }
+
   }, [startBuilding]);
 
- 
+
+
+const getLocationPermission = async () => {
+    try {
+        const permission = await Location.requestForegroundPermissionsAsync();
+        if (!permission || !permission.status) {
+            throw new Error("Location permission request failed");
+        }
+
+        if (permission.status !== "granted") {
+            Alert.alert("Permission denied", "We need location permissions to show your location.");
+            return;
+        }
+    } catch (error) {
+        console.error("Error requesting location permission:", error);
+    }
+};
+
+
   // Toggle user location on the map
   const toggleUserLocation = () => {
     setShowUserLocation(!showUserLocation);
@@ -229,8 +249,8 @@ export default function CampusMap() {
           <TouchableOpacity style={stylesButtons.navigateButton} onPress={handleNavigate}>
               <Text style={stylesButtons.navigateButtonText}>Navigate</Text>
           </TouchableOpacity>
-        )}    
-        
+        )}
+
         <View style={stylesButtons.footer}>
           <TouchableOpacity style={[stylesButtons.toggleButton, selectedCampus === "SGW" && stylesButtons.selectedCampus]} onPress={() => switchCampuses("SGW")}>
               <Text style={[
@@ -245,7 +265,7 @@ export default function CampusMap() {
                 selectedCampus === "LOY" && stylesButtons.selectedButtonText,
               ]}>LOY</Text>
           </TouchableOpacity>
-        </View>  
+        </View>
       </View>
 
 

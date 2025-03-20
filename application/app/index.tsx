@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import { router } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { initialize } from '@microsoft/react-native-clarity';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { signIn } from "../components/googleSignIn";
 import { webClientIDVariable } from "./config";
 
