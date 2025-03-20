@@ -25,6 +25,13 @@ jest.mock('../../app/utils/useBuildings', () => ({
   ]),
 }));
 
+//Mock for live user location
+jest.mock("expo-location", () => ({
+    requestForegroundPermissionsAsync: jest.fn(() =>
+        Promise.resolve({ status: "granted" })
+    ),
+}));
+
 // Mock react-native-maps to avoid native module issues in testing
 jest.mock('react-native-maps', () => {
   const React = require('react');
