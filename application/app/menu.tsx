@@ -13,6 +13,15 @@ export default function Index() {
       >
         <Text style={styles.buttonText}>Campus Map</Text>
       </Pressable>
+      
+      {/* Redirect to the schedule */}
+      <Pressable 
+        style={styles.button}
+        onPress={() => router.push("/schedule")}
+      >
+        <Text style={styles.buttonText}>Schedule</Text>
+      </Pressable>
+      
       <Pressable 
         style={styles.button}
         onPress={() => setIsFeedbackVisible(true)}

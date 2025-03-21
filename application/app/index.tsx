@@ -11,7 +11,8 @@ console.log(webClientID);
 
 GoogleSignin.configure({
   webClientId: webClientID,
-  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+  scopes: ['https://www.googleapis.com/auth/drive.readonly'
+    ,'https://www.googleapis.com/auth/calendar.readonly'],
   offlineAccess: true,
   forceCodeForRefreshToken: true
 });
