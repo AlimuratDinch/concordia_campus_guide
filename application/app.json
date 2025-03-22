@@ -49,9 +49,6 @@
     },
     "ios": {
       "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app"
-    },
-    "ios": {
-      "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app"
     }
   }
 }
