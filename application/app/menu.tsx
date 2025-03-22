@@ -25,18 +25,6 @@ export default function Index() {
         style={styles.button}
         onPress={() => router.push("/IndoorHall8Map")}
       >
-        <Text style={styles.buttonText}>Indoor Search</Text>
-      </Pressable>
-      <Pressable 
-        style={styles.button}
-        onPress={() => router.push("/IndoorHall8Map")}
-      >
-        <Text style={styles.buttonText}>Hall Building Floor Map</Text>
-      </Pressable>
-      <Pressable 
-        style={styles.button}
-        onPress={() => router.push("/IndoorHall8Map")}
-      >
         <Text style={styles.buttonText}>Hall Building Floor Map</Text>
       </Pressable>
       <Pressable 
@@ -45,14 +33,6 @@ export default function Index() {
       >
         <Text style={styles.buttonText}>Leave Feedback</Text>
         
-      </Pressable>
-
-      {/* TEMPORARY FOR TESTING */}
-      <Pressable 
-        style={styles.button}
-        onPress={() => router.push("/application")}
-      >
-        <Text style={styles.buttonText}>Application (TEMP)</Text>
       </Pressable>
 
       <FeedbackPopUp visible={isFeedbackVisible} onClose={() => setIsFeedbackVisible(false)} />
