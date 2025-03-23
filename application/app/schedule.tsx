@@ -8,7 +8,7 @@ export default function Schedule() {
   const [loading, setLoading] = useState(true);
 
   // PR Review
-  const timeSlots = Array.from({ length: 16 }, (_, i) => {
+  const timeSlots = Array.from({ length: 31 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
     const minutes = i % 2 === 0 ? "00" : "30";
     return `${hour}:${minutes}`;
@@ -109,72 +109,83 @@ const getEventPosition = (dateTime: string): number => {
 };
 
   return (
-    <ScrollView horizontal>
-      <View style={styles.container}>
-        {/* Header with month and dates */}
-        <View style={styles.header}>
-          <Text style={styles.month}>{new Date().toLocaleDateString("en-US", { month: "long" })}</Text>
-          <View style={styles.weekRow}>
-            {weekDays.map((day) => (
-              <View key={day.date} style={styles.dayBox}>
-                <Text style={styles.dayText}>{day.date}</Text>
-                <Text style={styles.dayName}>{day.day}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Main Schedule Grid */}
-        <View style={styles.schedule}>
-          {/* Time Column */}
-          <View style={styles.timeColumn}>
-            {timeSlots.map((time, index) => (
-              <View key={index} style={styles.timeSlot}>
-                <Text style={styles.timeText}>{time}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Week Column with Events */}
-          <ScrollView>
-            <View style={styles.weekContainer}>
-              {weekDays.map((day, dayIndex) => (
-                <View key={dayIndex} style={styles.dayColumn}>
-                  {timeSlots.map((_, slotIndex) => (
-                    <View key={slotIndex} style={styles.timeBlock} />
-                  ))}
-
-                  {/* Events */}
-                  {events
-                    .filter((event) => new Date(event.start.dateTime).toDateString() === new Date(day.fullDate).toDateString())
-                    .map((event) => {
-                      const startIndex = getEventPosition(event.start.dateTime);
-                      const endIndex = getEventPosition(event.end.dateTime);
-                      return (
-                        <TouchableOpacity
-                          key={event.id}
-                          style={[
-                            styles.eventBlock,
-                            {
-                              top: startIndex * 40, // Position event vertically
-                              height: (endIndex - startIndex) * 40, // Adjust height based on duration
-                            },
-                          ]}
-                          onPress={() =>
-                            Alert.alert("Event Details", `${event.summary}\n${event.location || "No location"}`)
-                          }
-                        >
-                          <Text style={styles.eventText}>{event.summary}</Text>
-                        </TouchableOpacity>
-                      );
-                    })}
+    <View style={{ flex: 1 }}>
+      <ScrollView horizontal>
+        <View style={{ flexDirection: 'column', flex: 1 }}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.month}>
+              {new Date().toLocaleDateString("en-US", { month: "long" })}
+            </Text>
+            <View style={styles.weekRow}>
+              {weekDays.map((day) => (
+                <View key={day.date} style={styles.dayBox}>
+                  <Text style={styles.dayText}>{day.date}</Text>
+                  <Text style={styles.dayName}>{day.day}</Text>
                 </View>
               ))}
             </View>
+          </View>
+
+          {/* Schedule Grid with vertical scroll */}
+          <ScrollView style={{ maxHeight: 640 }} contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={styles.schedule}>
+              {/* Time Column */}
+              <View style={styles.timeColumn}>
+                {timeSlots.map((time, index) => (
+                  <View key={index} style={styles.timeSlot}>
+                    <Text style={styles.timeText}>{time}</Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Days Columns */}
+              <View style={styles.weekContainer}>
+                {weekDays.map((day, dayIndex) => (
+                  <View key={dayIndex} style={styles.dayColumn}>
+                    {timeSlots.map((_, slotIndex) => (
+                      <View key={slotIndex} style={styles.timeBlock} />
+                    ))}
+
+                    {/* Events */}
+                    {events
+                      .filter(
+                        (event) =>
+                          new Date(event.start.dateTime).toDateString() ===
+                          new Date(day.fullDate).toDateString()
+                      )
+                      .map((event) => {
+                        const startIndex = getEventPosition(event.start.dateTime);
+                        const endIndex = getEventPosition(event.end.dateTime);
+                        return (
+                          <TouchableOpacity
+                            key={event.id}
+                            style={[
+                              styles.eventBlock,
+                              {
+                                top: startIndex * 40,
+                                height: (endIndex - startIndex) * 40,
+                              },
+                            ]}
+                            onPress={() =>
+                              Alert.alert(
+                                "Event Details",
+                                `${event.summary}\n${event.location || "No location"}`
+                              )
+                            }
+                          >
+                            <Text style={styles.eventText}>{event.summary}</Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                  </View>
+                ))}
+              </View>
+            </View>
           </ScrollView>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -182,7 +193,7 @@ const styles = StyleSheet.create({
   container: { flexDirection: "column", backgroundColor: "#f5f5f5" },
 
   // Header
-  header: { padding: 10, backgroundColor: "#912338", alignItems: "center" },
+  header: { padding: 10, backgroundColor: "#666666", alignItems: "center" },
   month: { fontSize: 20, fontWeight: "bold", },
   weekRow: { flexDirection: "row", justifyContent: "space-around", width: "100%" ,color: "white"},
   dayBox: { alignItems: "center", padding: 5 },
@@ -190,7 +201,7 @@ const styles = StyleSheet.create({
   dayName: { fontSize: 12, color: "white" },
 
   // Schedule Grid
-  schedule: { flexDirection: "row", padding: 10 },
+  schedule: { flexDirection: "row", padding: 10, backgroundColor: "#f5f5f5" },
   timeColumn: { width: 60, alignItems: "center" },
   timeSlot: { height: 40, justifyContent: "center" },
   timeText: { fontSize: 14 },

@@ -10,7 +10,7 @@ export const signIn = async () => {
       const userInfo = await GoogleSignin.signIn();
       console.log(userInfo);
       if (userInfo.data !== null) {
-        router.push("/menu");
+        router.push("/application");
       }
     } catch (error: any) {
       console.log("Sign in error:", error);
