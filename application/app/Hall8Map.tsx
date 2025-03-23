@@ -1,18 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Svg, { G, Circle, Text as SvgText } from "react-native-svg";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
 import Hall8 from "../assets/indoorMaps/Hall-8.svg";
 
-const MapScreen = () => {
+const Hall8Map = () => {
   const scale = useSharedValue(1);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const savedScale = useSharedValue(1); 
 
-  const pinchGesture = Gesture.Pinch().onUpdate((event) => {
-    scale.value = event.scale;
-  });
+  // Reset scale on mount
+  useEffect(() => {
+    scale.value = 1;
+    savedScale.value = 1;
+    translateX.value = 0;
+    translateY.value = 0;
+  }, []);
+
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((event) => {
+      // Multiply the current scale by the event scale to get the new cumulative scale
+      scale.value = savedScale.value * event.scale;
+    })
+    .onEnd(() => {
+      // Save the final scale value after the pinch ends
+      savedScale.value = scale.value;
+    });
 
   const panGesture = Gesture.Pan().onUpdate((event) => {
     translateX.value = event.translationX;
@@ -27,19 +42,18 @@ const MapScreen = () => {
     ],
   }));
 
-  // Updated nodes with correct 8th floor IDs and labels
   const nodes = [
-    { id: "H1-H2", type: "hallway", x: 555, y: 227 }, // Central hallway intersection 1 with H2
-    { id: "H1-U", type: "hallway", x: 555, y: 120  }, // Upper main hallway
-    { id: "H1-M", type: "hallway", x: 555, y: 500 }, // Middle main hallway
-    { id: "H1-I2", type: "hallway", x: 555, y: 800 }, // Bottom main hallway intersection 2
-    { id: "H2-LC", type: "hallway", x: 185, y: 227 }, // Halway 2 Left Corner
-    { id: "H2-ML", type: "hallway", x: 380, y: 227 }, 
-    { id: "H2-MR", type: "hallway", x: 710, y: 227 }, 
-    { id: "H2-CR", type: "hallway", x: 835, y: 227 }, 
-    { id: "806-01", type: "classroom", x: 490, y: 280 }, 
-    { id: "806-02", type: "classroom", x: 490, y: 318 }, 
-    { id: "806-03", type: "classroom", x: 490, y: 355 }, 
+    { id: "H1-H2", type: "hallway", x: 555, y: 227 },
+    { id: "H1-U", type: "hallway", x: 555, y: 120 },
+    { id: "H1-M", type: "hallway", x: 555, y: 500 },
+    { id: "H1-I2", type: "hallway", x: 555, y: 800 },
+    { id: "H2-LC", type: "hallway", x: 185, y: 227 },
+    { id: "H2-ML", type: "hallway", x: 380, y: 227 },
+    { id: "H2-MR", type: "hallway", x: 710, y: 227 },
+    { id: "H2-CR", type: "hallway", x: 835, y: 227 },
+    { id: "806-01", type: "classroom", x: 490, y: 280 },
+    { id: "806-02", type: "classroom", x: 490, y: 318 },
+    { id: "806-03", type: "classroom", x: 490, y: 355 },
     { id: "801", type: "classroom", x: 190, y: 170 },
     { id: "803", type: "classroom", x: 290, y: 170 },
     { id: "807", type: "classroom", x: 470, y: 170 },
@@ -47,18 +61,16 @@ const MapScreen = () => {
     { id: "813", type: "classroom", x: 740, y: 170 },
     { id: "815", type: "classroom", x: 835, y: 170 },
     { id: "817", type: "classroom", x: 890, y: 170 },
-    { id: "857", type: "classroom", x: 150, y: 550 }, 
-
+    { id: "857", type: "classroom", x: 150, y: 550 },
   ];
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
         <Animated.View style={[styles.mapContainer, animatedStyle]}>
-          <Svg viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet">
+          <Svg viewBox="0 0 1050 1050" preserveAspectRatio="xMidYMid meet">
             <G>
               <Hall8 />
-              {/* Render nodes as circles with labels */}
               {nodes.map((node) => (
                 <G key={node.id}>
                   <Circle
@@ -70,11 +82,11 @@ const MapScreen = () => {
                     strokeWidth={2}
                   />
                   <SvgText
-                    x={node.x} // Center the text on the node's x-coordinate
-                    y={node.y - 15} // Position above the circle (circle radius is 10, so -15 moves it just above)
+                    x={node.x}
+                    y={node.y - 15}
                     fill="black"
                     fontSize={25}
-                    textAnchor="middle" // Center the text horizontally
+                    textAnchor="middle"
                   >
                     {node.id}
                   </SvgText>
@@ -88,7 +100,7 @@ const MapScreen = () => {
   );
 };
 
-export default MapScreen;
+export default Hall8Map;
 
 const styles = StyleSheet.create({
   container: {
@@ -98,9 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mapContainer: {
-    width: "100%",
-    height: "100%",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
 });
