@@ -23,7 +23,8 @@
       "!**/babel.config.js",
       "!**/expo-env.d.ts",
       "!**/.expo/**",
-      "!**/.eslintrc.js"
+      "!**/.eslintrc.js",
+      "!**/android/**"
     ],
     "coverageReporters": [
       "json",
