@@ -7,7 +7,6 @@ export default function Schedule() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // PR Review
   const timeSlots = Array.from({ length: 31 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
     const minutes = i % 2 === 0 ? "00" : "30";
@@ -64,7 +63,6 @@ const fetchCalendarEvents = async (accessToken: string) => {
                 headers: { Authorization: `Bearer ${accessToken}` },
             }
         );
-        // The resolution for the PR review
         if (!response.ok) {
             console.error("Error fetching calendar events");
             return;
