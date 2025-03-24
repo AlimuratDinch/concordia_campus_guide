@@ -86,8 +86,6 @@ it('should fail sign in for non-existing user in db', async () => {
 
 
 
-
-
 ////////////////////
   it('should delete a user', async () => {
     const response = await request(app)
