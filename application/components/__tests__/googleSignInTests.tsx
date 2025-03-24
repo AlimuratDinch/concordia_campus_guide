@@ -70,4 +70,18 @@ describe('Google Sign-In', () => {
 
     expect(console.log).toHaveBeenCalledWith(error);
   });
+
+  it('should log the correct error message for known status codes', async () => {
+    const error = { code: statusCodes.IN_PROGRESS };
+  
+    (GoogleSignin.signIn as jest.Mock).mockRejectedValue(error);
+  
+    console.log = jest.fn();
+  
+    await signIn();
+  
+    expect(console.log).toHaveBeenCalledWith('Sign in error:', error);
+    expect(console.log).toHaveBeenCalledWith('Sign-in already in progress.');
+  });
+  
 });
