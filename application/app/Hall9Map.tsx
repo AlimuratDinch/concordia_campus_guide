@@ -130,7 +130,7 @@ const Hall9Map = () => {
                     cx={node.x}
                     cy={node.y}
                     r={node.type === "hallway" ? 6 : 12} // Smaller radius for hallway nodes
-                    fill={node.type === "classroom" ? "orange" : node.type === "hallway" ? "green" :  node.type === "Bathroom" ? "pink" : "blue"} // Set different colors for hallways
+                    fill={node.type === "classroom" ? "orange" : node.type === "hallway" ? "green" : node.type === "Bathroom" ? "pink" : "blue"} // Set different colors for hallways
                     stroke="black"
                     strokeWidth={2}
                   />
