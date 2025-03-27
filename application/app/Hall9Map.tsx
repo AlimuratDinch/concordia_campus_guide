@@ -6,7 +6,7 @@ import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanima
 import Hall9 from "../assets/indoorMaps/Hall-9.svg";
 
 const Hall9Map = () => {
-  const scale = useSharedValue(0.6); // Starts at 1, ensuring no initial zoom
+  const scale = useSharedValue(0.55); // Starts at 1, ensuring no initial zoom
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
@@ -57,7 +57,6 @@ const Hall9Map = () => {
      { id: "933", type: "classroom", x: 750, y: 900 },
      { id: "932", type: "classroom", x: 740, y: 810 },
      { id: "928", type: "classroom", x: 790, y: 810 },
-     { id: "985", type: "classroom", x: 715, y: 740 },
      { id: "937", type: "classroom", x: 560, y: 810 },
      { id: "906", type: "classroom", x: 485, y: 260 },
 
@@ -97,12 +96,13 @@ const Hall9Map = () => {
      { id: "968", type: "classroom", x: 230, y: 610 },
      { id: "966", type: "classroom", x: 370, y: 610 },
 
-     { id: "975", type: "classroom", x: 300, y: 730 },
      { id: "981", type: "classroom", x: 360, y: 760 },
      { id: "945", type: "classroom", x: 300, y: 800 },
      { id: "943", type: "classroom", x: 330, y: 860 },
 
       { id: "stairs", type: "stairs", x: 260, y: 350 },
+      { id: "stairs-1", type: "stairs", x: 300, y: 730 },
+      { id: "stairs-2", type: "stairs", x: 715, y: 740 },
       { id: "elevators", type: "elevators", x: 350, y: 350 },
        { id: "escalators", type: "escalators", x: 480, y: 550 },
 
@@ -143,7 +143,7 @@ const Hall9Map = () => {
                       fontSize={25}
                       textAnchor="middle"
                     >
-                      {node.id}
+                      {node.type === "stairs" ? node.type:node.id}
                     </SvgText>
                   )}
                 </G>
