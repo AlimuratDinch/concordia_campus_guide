@@ -6,7 +6,7 @@ import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanima
 import Hall9 from "../assets/indoorMaps/Hall-9.svg";
 
 const Hall9Map = () => {
-  const scale = useSharedValue(1); // Starts at 1, ensuring no initial zoom
+  const scale = useSharedValue(0.6); // Starts at 1, ensuring no initial zoom
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
@@ -28,6 +28,9 @@ const Hall9Map = () => {
   }));
 
   const nodes = [
+    
+     { id: "Bathroom-F", type: "Bathroom", x: 350, y: 265 },
+     { id: "Bathroom-M", type: "Bathroom", x: 650, y: 265 },
 
      { id: "967", type: "classroom", x: 70, y: 170 },
      { id: "965", type: "classroom", x: 70, y: 350 },
@@ -39,14 +42,12 @@ const Hall9Map = () => {
      { id: "913", type: "classroom", x: 725, y: 135 },
      { id: "915", type: "classroom", x: 825, y: 135 },
      { id: "917", type: "classroom", x: 930, y: 135 },
-     { id: "902", type: "classroom", x: 350, y: 300 },
      { id: "908", type: "classroom", x: 485, y: 350 },
      { id: "980", type: "classroom", x: 570, y: 390 },
      { id: "992", type: "classroom", x: 425, y: 360 },
      { id: "919", type: "classroom", x: 930, y: 235 },
      { id: "921", type: "classroom", x: 930, y: 345 },
      { id: "923", type: "classroom", x: 930, y: 450 },
-     { id: "910", type: "classroom", x: 650, y: 350 },
      { id: "990", type: "classroom", x: 720, y: 350 },
      { id: "986", type: "classroom", x: 775, y: 350 },
      { id: "920", type: "classroom", x: 700, y: 470 },
@@ -123,30 +124,30 @@ const Hall9Map = () => {
           <Svg viewBox="0 0 1050 1050" preserveAspectRatio="xMidYMid meet">
             <G>
               <Hall9 />
-    {nodes.map((node) => (
-      <G key={node.id}>
-        <Circle
-          cx={node.x}
-          cy={node.y}
-          r={node.type === "hallway" ? 6 : 12} // Smaller radius for hallway nodes
-          fill={node.type === "classroom" ? "orange" : node.type === "hallway" ? "green" : "blue"} // Set different colors for hallways
-          stroke="black"
-          strokeWidth={2}
-        />
-        {/* Conditionally render the label only for non-hallway nodes */}
-        {node.type !== "hallway" && (
-          <SvgText
-            x={node.x}
-            y={node.y - 15}
-            fill="black"
-            fontSize={25}
-            textAnchor="middle"
-          >
-            {node.id}
-          </SvgText>
-        )}
-      </G>
-    ))}
+              {nodes.map((node) => (
+                <G key={node.id}>
+                  <Circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={node.type === "hallway" ? 6 : 12} // Smaller radius for hallway nodes
+                    fill={node.type === "classroom" ? "orange" : node.type === "hallway" ? "green" :  node.type === "Bathroom" ? "pink" : "blue"} // Set different colors for hallways
+                    stroke="black"
+                    strokeWidth={2}
+                  />
+                  {/* Conditionally render the label only for non-hallway nodes */}
+                  {node.type !== "hallway" && (
+                    <SvgText
+                      x={node.x}
+                      y={node.y - 15}
+                      fill="black"
+                      fontSize={25}
+                      textAnchor="middle"
+                    >
+                      {node.id}
+                    </SvgText>
+                  )}
+                </G>
+              ))}
             </G>
           </Svg>
         </Animated.View>
