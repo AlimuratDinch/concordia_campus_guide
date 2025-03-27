@@ -33,7 +33,7 @@ describe('Google Sign-In', () => {
     expect(GoogleSignin.signOut).toHaveBeenCalled();
     expect(GoogleSignin.hasPlayServices).toHaveBeenCalled();
     expect(GoogleSignin.signIn).toHaveBeenCalled();
-    expect(router.push).toHaveBeenCalledWith('/menu');
+    expect(router.push).toHaveBeenCalledWith('/application');
   });
 
   it('should handle sign-in in progress error', async () => {

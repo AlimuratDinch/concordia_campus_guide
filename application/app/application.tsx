@@ -44,6 +44,7 @@ const ConcordiaApp = () => {
             {/* IMAGE */}
             <View style={styles.imageContainer}>
               <Image
+                testID="concordia-logo"
                 source={require('../assets/concordia-logo.jpg')}
                 style={styles.image}
                 resizeMode="contain"
@@ -160,21 +161,21 @@ const ConcordiaApp = () => {
 
       {/* NAV BAR */}
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('Home')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('Home')} testID='tab-home'>
           <Ionicons
             name={activeTab === 'Home' ? 'home' : 'home-outline'}
             size={24}
             color={activeTab === 'Home' ? '#7A1E29' : '#555'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('Campus')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('Campus')} testID='tab-campus'>
           <Ionicons
             name={activeTab === 'Campus' ? 'school' : 'school-outline'}
             size={24}
             color={activeTab === 'Campus' ? '#7A1E29' : '#555'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('Schedule')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => setActiveTab('Schedule')} testID='tab-schedule'>
           <Ionicons
             name={activeTab === 'Schedule' ? 'time' : 'time-outline'}
             size={24}
