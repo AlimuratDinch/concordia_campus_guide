@@ -4,6 +4,23 @@ import { Ionicons } from '@expo/vector-icons'; // Imported icons
 import { router } from 'expo-router'; // Import expo-router
 import Schedule from './schedule';
 
+const IconLabel = ({ name, title, subtitle, onPress }: {
+  name: keyof typeof Ionicons.glyphMap;
+  title: string;
+  subtitle?: string;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity style={styles.campusItem} onPress={onPress}>
+    <View style={styles.campusIconContainer}>
+      <Ionicons name={name} size={24} color="#912338" />
+    </View>
+    <View style={styles.campusItemContent}>
+      <Text style={styles.campusItemTitle}>{title}</Text>
+      {subtitle && <Text style={styles.campusItemSubtitle}>{subtitle}</Text>}
+    </View>
+  </TouchableOpacity>
+);
+
 const ConcordiaApp = () => {
   const [activeTab, setActiveTab] = useState('Home');
 
@@ -90,83 +107,19 @@ const ConcordiaApp = () => {
                 {/* SGW SECTION */}
                 <Text style={styles.campusHeader}>Sir George Williams Campus</Text>
                 <View style={styles.campusSection}>
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/CampusMap')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="map" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>SGW Campus map</Text>
-                      <Text style={styles.campusItemSubtitle}>Buildings, departments and services</Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="business" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>SGW buildings (WIP)</Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="car" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>Parking map (WIP)</Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="bicycle" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>Bike rack map (WIP)</Text>
-                    </View>
-                  </TouchableOpacity>
+                  <IconLabel name="map" title="SGW Campus map" subtitle="Buildings, departments and services" onPress={() => router.push('/CampusMap')} />
+                  <IconLabel name="business" title="SGW buildings (WIP)" onPress={() => router.push('/')} />
+                  <IconLabel name="car" title="Parking map (WIP)" onPress={() => router.push('/')} />
+                  <IconLabel name="bicycle" title="Bike rack map (WIP)" onPress={() => router.push('/')} />
                 </View>
                 
                 {/* LOY SECTION */}
                 <Text style={styles.campusHeader}>Loyola Campus</Text>
                 <View style={styles.campusSection}>
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/CampusMap')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="map" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>LOY Campus map</Text>
-                      <Text style={styles.campusItemSubtitle}>Buildings, departments and services</Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="business" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>LOY buildings (WIP)</Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="car" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>Parking map (WIP)</Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.campusItem} onPress={() => router.push('/')}>
-                    <View style={styles.campusIconContainer}>
-                      <Ionicons name="bicycle" size={24} color="#912338" />
-                    </View>
-                    <View style={styles.campusItemContent}>
-                      <Text style={styles.campusItemTitle}>Bike rack map (WIP)</Text>
-                    </View>
-                  </TouchableOpacity>
+                  <IconLabel name="map" title="LOY Campus map" subtitle="Buildings, departments and services" onPress={() => router.push('/CampusMap')} />
+                  <IconLabel name="business" title="LOY buildings (WIP)" onPress={() => router.push('/')} />
+                  <IconLabel name="car" title="Parking map (WIP)" onPress={() => router.push('/')} />
+                  <IconLabel name="bicycle" title="Bike rack map (WIP)" onPress={() => router.push('/')} />
                 </View>
                 
                 {/* SHUTTLE BUS SECTION */}
