@@ -51,7 +51,7 @@ const Hall8Map = () => {
     { id: "H1-HE", type: "hallway", x: 555, y: 400, adjacent: ["HE-3","H1-MU","H1-M"]},
     { id: "H1-M", type: "hallway", x: 555, y: 520, adjacent: ["H1-HE","H1-ML"]},
     { id: "H1-ML", type: "hallway", x: 555, y: 650, adjacent: ["H1-M","escalators-up","H1-H2.1"]},
-    { id: "H1-H2.1", type: "hallway", x: 555, y: 800, adjacent: ["H1-ML","H2.1-ML2","H2.1-MR2","H1-L","841","838","837","832"]},
+    { id: "H1-H2.1", type: "hallway", x: 555, y: 800, adjacent: ["H1-ML","H2.1-ML2","H2.1-MR2","H1-L","841","838"]},
     { id: "H1-L", type: "hallway", x: 555, y: 900, adjacent: ["H1-H2.1"]},
 
     //Upper Hallway left to right
@@ -63,7 +63,7 @@ const Hall8Map = () => {
     //Lower Hallway left to right
     { id: "H2.1-LC2", type: "hallway", x: 185, y: 800, adjacent: ["H3-ML","851-01","851-02","851-03","849","847","H2.1-ML2"]},
     { id: "H2.1-ML2", type: "hallway", x: 380, y: 800,  adjacent: ["H2.1-LC2","stairs-H2.1-1","845","843","881","842","H1-H2.1"]},
-    { id: "H2.1-MR2", type: "hallway", x: 710, y: 800, adjacent: ["H1-H2.1","stairs-H2.1-2","H2.1-CR2","835"]},
+    { id: "H2.1-MR2", type: "hallway", x: 710, y: 800, adjacent: ["H1-H2.1","stairs-H2.1-2","H2.1-CR2","835","832","837"]},
     { id: "H2.1-CR2", type: "hallway", x: 835, y: 800,  adjacent: ["H2.1-MR2","833","837","829","H4-ML"]},
 
     //Left hallway top to bottom
@@ -73,7 +73,7 @@ const Hall8Map = () => {
     { id: "H3-ML", type: "hallway", x: 185, y: 650, adjacent: ["H3-M","H2.1-LC2","855","853","852","854"]},
 
     //Right hallway top to bottom
-    { id: "H4-MU", type: "hallway", x: 835, y: 350, adjacent: ["H4-M","H2-CR","889","821","823","820-1"]},
+    { id: "H4-MU", type: "hallway", x: 835, y: 350, adjacent: ["H4-M","H2-CR","886","821","823","820-1"]},
     { id: "H4-M", type: "hallway", x: 835, y: 500, adjacent: ["H4-ML","H4-MU","820-2","825"]},
     { id: "H4-ML", type: "hallway", x: 835, y: 650, adjacent: ["H2.1-CR2","H3-M","829","827","822"]},
 
@@ -122,7 +122,7 @@ const Hall8Map = () => {
     //Bottom Row
     { id: "833", type: "classroom", x: 830, y: 840, adjacent: ["H2.1-CR2"]},
     { id: "835", type: "classroom", x: 740, y: 840, adjacent: ["H2.1-MR2"]},
-    { id: "837", type: "classroom", x: 640, y: 840, adjacent: ["H1-H2.1"]},
+    { id: "837", type: "classroom", x: 640, y: 840, adjacent: ["H2.1-MR2"]},
     { id: "841", type: "classroom", x: 470, y: 840, adjacent: ["H1-H2.1"]},
     { id: "843", type: "classroom", x: 380, y: 840, adjacent: ["H2.1-ML2"]},
     { id: "845", type: "classroom", x: 290, y: 840, adjacent: ["H2.1-ML2"]},
@@ -140,7 +140,7 @@ const Hall8Map = () => {
 
     { id: "892", type: "classroom", x: 420, y: 360, adjacent: ["HE-2"]},
 
-    { id: "832", type: "classroom", x: 640, y: 760, adjacent: ["H1-H2.1"]},
+    { id: "832", type: "classroom", x: 640, y: 760, adjacent: ["H2.1-MR2"]},
     { id: "822", type: "classroom", x: 800, y: 610, adjacent: ["H4-ML"]},
     { id: "820-1", type: "classroom", x: 770, y: 410, adjacent: ["H4-MU"]},
     { id: "820-2", type: "classroom", x: 770, y: 530, adjacent: ["H4-M"]},
