@@ -72,21 +72,6 @@ describe('Login', () => {
     fireEvent.press(getByText('Sign In'));
     
     //check router.push call
-    await waitFor(() => {expect(router.push).toHaveBeenCalledWith('/menu');});
+    await waitFor(() => {expect(router.push).toHaveBeenCalledWith('/application');});
   });
-
-  it("navigates to the signup screen when 'New student? Activate your account' is pressed", async () => {
-      const { getByText } = render(<Login />);
-  
-      //check 'Already have an account? Sign In' text
-      const signUpButton = getByText("New student? Activate your account");
-  
-      //simulate press on link
-      fireEvent.press(signUpButton);
-  
-      //check router.push call
-      await waitFor(() => {
-        expect(router.push).toHaveBeenCalledWith("/SignUp");
-      });
-});
 });

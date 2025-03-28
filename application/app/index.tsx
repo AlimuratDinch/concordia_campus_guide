@@ -26,7 +26,7 @@ export default function LoginScreen() {
   //check if netname and password are "ADMIN"
   const handleSignIn = () => {
     if (netname === "ADMIN" && password === "ADMIN") {
-      router.push("/menu");
+      router.push("/application");
     }
   };
 
@@ -64,14 +64,6 @@ export default function LoginScreen() {
           color={GoogleSigninButton.Color.Dark}
           onPress={signIn}
         />
-
-        <TouchableOpacity onPress={() => console.log("TEMPORARY: Forgot Password?")}>
-          <Text style={styles.link}>Forgot password? (WIP)</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push("/SignUp")}>
-          <Text style={styles.link}>New student? Activate your account</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
