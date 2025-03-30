@@ -1,11 +1,14 @@
 import React from "react";
+import { useState } from "react";
 import { StyleSheet } from "react-native";
-import Svg, { G, Circle, Text as SvgText } from "react-native-svg";
+import Svg, { Polyline ,G, Circle, Text as SvgText } from "react-native-svg";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
 import Hall9 from "../assets/indoorMaps/Hall-9.svg";
 
 const Hall9Map = () => {
+
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>(['964', '1', '2', '3', '4', '5', '6', 'H9-escalators']);
   const scale = useSharedValue(0.55); // Starts at 1, ensuring no initial zoom
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -28,10 +31,9 @@ const Hall9Map = () => {
   }));
 
   const nodes = [
-
     //Bathrooms
-     { id: "Bathroom-F", type: "Bathroom", x: 350, y: 265 },
-     { id: "Bathroom-M", type: "Bathroom", x: 650, y: 265 },
+     { id: "H9-Bathroom-F", type: "Bathroom", x: 350, y: 265 },
+     { id: "H9-Bathroom-M", type: "Bathroom", x: 650, y: 265 },
 
      //Classrooms top left
      { id: "967", type: "classroom", x: 70, y: 170 },
@@ -151,11 +153,11 @@ const Hall9Map = () => {
     { id: "30", type: "hallway", x:840, y: 230, adjacent: ['29','919','917','915'] },
 
     { id: "31", type: "hallway", x:740, y: 230, adjacent: ['30','32','913','990'] },
-    { id: "32", type: "hallway", x:640, y: 230, adjacent: ['31','33','Bathroom-M','911'] },
+    { id: "32", type: "hallway", x:640, y: 230, adjacent: ['31','33','H9-Bathroom-M','911'] },
     { id: "33", type: "hallway", x:540, y: 230, adjacent: ['32','34','906','909'] },
     { id: "34", type: "hallway", x:440, y: 230, adjacent: ['33','35'] },
-    { id: "35", type: "hallway", x:340, y: 230, adjacent: ['34','36','Bathroom-F'] },
-   { id: "36", type: "hallway", x:240, y: 230, adjacent: ['35','37'] },
+    { id: "35", type: "hallway", x:340, y: 230, adjacent: ['34','36','H9-Bathroom-F'] },
+    { id: "36", type: "hallway", x:240, y: 230, adjacent: ['35','37'] },
     { id: "37", type: "hallway", x:180, y: 230, adjacent: ['36','38','903','967'] },
 
     { id: "38", type: "hallway", x:180, y: 330, adjacent: ['37','39','965'] },
@@ -165,6 +167,21 @@ const Hall9Map = () => {
 
   ];
 
+  const drawPath = (nodeIds: string[]) => {
+    if (nodeIds.length < 2) return null;
+
+    const pathData = nodeIds
+      .map((id) => {
+        const node = nodes.find((n) => n.id === id);
+        if (!node) return null;
+        return `${node.x},${node.y}`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
+    return <Polyline points={pathData} stroke="black" strokeWidth={6} fill="none" />;
+  };
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
@@ -172,6 +189,7 @@ const Hall9Map = () => {
           <Svg viewBox="0 0 1050 1050" preserveAspectRatio="xMidYMid meet">
             <G>
               <Hall9 />
+               {drawPath(selectedNodeIds)} {/* Draw the path here */}
               {nodes.map((node) => (
                 <G key={node.id}>
                   <Circle
