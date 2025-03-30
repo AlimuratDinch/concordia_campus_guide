@@ -4,7 +4,7 @@ import MapView, { Polygon, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import SearchBar from './components/SearchBar';
 import BuildingPopup from "./components/BuildingPopup";
-import { parseCoordinates, getCenterFromCoordinates, mapCoordinates, Coordinate } from "./utils/coordinateHelpers";
+import { parseCoordinates, getCenterFromCoordinates, mapCoordinates, Coordinate, findBuildingAtLocation } from "./utils/coordinateHelpers";
 import { useBuildings } from './utils/useBuildings';
 
 interface Building {
@@ -21,12 +21,11 @@ export default function CampusMap() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [showUserLocation, setShowUserLocation] = useState<boolean>(true);
+  const [userLocation, setUserLocation] = useState<Coordinate | null>(null);
 
   // Start & Destination
   const [startBuilding, setStartBuilding] = useState<Building | null>(null);
-  const [destinationBuilding, setDestinationBuilding] = useState<Building | null>(
-    null
-  );
+  const [destinationBuilding, setDestinationBuilding] = useState<Building | null>(null);
 
   // function to retreive the building
   const buildings = useBuildings();
@@ -105,9 +104,45 @@ export default function CampusMap() {
 
   }, [startBuilding]);
 
+  useEffect(() => {
+    getLocationPermission();
+    const getLocation = async () => {
+      try {
+        const location = await Location.getCurrentPositionAsync({});
+        setUserLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+        });
+      } catch (error) {
+        console.error("Error getting location:", error);
+      }
+    };
 
+    // Update location every 10 seconds
+    const locationInterval = setInterval(getLocation, 10000);
+    getLocation(); // Initial location fetch
 
-const getLocationPermission = async () => {
+    return () => clearInterval(locationInterval);
+  }, []);
+
+  const handleSetCurrentLocationAsStart = async () => {
+    if (!userLocation) {
+      Alert.alert("Error", "Unable to get your current location. Please make sure location services are enabled.");
+      return;
+    }
+
+    const currentBuilding = findBuildingAtLocation(userLocation, buildings);
+    
+    if (!currentBuilding) {
+      Alert.alert("Not in a Building", "You must be inside a Concordia building to set it as your start location.");
+      return;
+    }
+
+    setStartBuilding(currentBuilding);
+    Alert.alert("Success", `Set ${currentBuilding.BuildingName} as your start location.`);
+  };
+
+  const getLocationPermission = async () => {
     try {
         const permission = await Location.requestForegroundPermissionsAsync();
         if (!permission || !permission.status) {
@@ -121,8 +156,7 @@ const getLocationPermission = async () => {
     } catch (error) {
         console.error("Error requesting location permission:", error);
     }
-};
-
+  };
 
   // Toggle user location on the map
   const toggleUserLocation = () => {
@@ -219,6 +253,15 @@ const getLocationPermission = async () => {
         )}
       </MapView>
 
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSetCurrentLocationAsStart}
+        >
+          <Text style={styles.buttonText}>Set Current Building as Start</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.searchContainer}>
         <SearchBar
           data={buildingNames}
@@ -267,8 +310,6 @@ const getLocationPermission = async () => {
           </TouchableOpacity>
         </View>
       </View>
-
-
     </View>
   );
 }
@@ -292,6 +333,29 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 5,
     borderWidth: 1,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 60,
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#900',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
@@ -357,4 +421,3 @@ const stylesButtons = StyleSheet.create({
     color: "#fff",
   },
 });
-
