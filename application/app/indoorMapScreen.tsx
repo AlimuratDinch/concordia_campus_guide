@@ -5,13 +5,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import IndoorSearch, { GraphNode } from "./IndoorSearch";
 import Hall8Map from "./Hall8Map";
 import Hall9Map from "./Hall9Map";
-import { PathFinder } from "./PathAlgorithmDev";
+import { PathFinder } from "./PathAlgorithmDev.ts";
 
 const IndoorMapScreen = () => {
   const [showHall8, setShowHall8] = useState(true);
   const [path, setPath] = useState<string[]>([]);
 
-
+  // Your full Rawnodes data (replace [...] with actual data)
   const Rawnodes: GraphNode[] = [
        //HALL 8th Floor
        //Middle Hallway top to bottom
@@ -241,20 +241,19 @@ const IndoorMapScreen = () => {
   };
 
 return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <View style={styles.buttonContainer}>
-          <Button
-            title={`Switch to Hall ${showHall8 ? "9" : "8"}`.toUpperCase()}
-            onPress={toggleMap}
-          />
-        </View>
-        <IndoorSearch nodes={Rawnodes} onSearch={handleSearch} />
-        {showHall8 ? <Hall8Map path={path} /> : <Hall9Map path={path} />}
+  <SafeAreaView style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Button
+          title={`Switch to Hall ${showHall8 ? "9" : "8"}`.toUpperCase()}
+          onPress={toggleMap}
+        />
       </View>
-    </SafeAreaView>
-  );
-};
+      <IndoorSearch nodes={Rawnodes} onSearch={handleSearch} />
+      {showHall8 ? <Hall8Map path={path} style={styles.map} /> : <Hall9Map path={path} style={styles.map} />}
+    </View>
+  </SafeAreaView>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -268,6 +267,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     zIndex: 1,
+  },
+  map: {
+    width: '100%', // Ensure the map takes the full width of the container
+    height: '80%', // Adjust height as needed to make it bigger
   },
 });
 
