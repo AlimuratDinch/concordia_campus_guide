@@ -310,7 +310,10 @@ const bfs = (graph: Graph, start: string, target: string, accessibility: string)
   return null;
 };
 
-//========== Test ================
+// Build the graph once
 const graph = buildGraph(nodes);
-const path = bfs(graph, "867", "964", "accessible");
-console.log("Final Path:", path);
+
+// Export PathFinder with pre-inserted graph
+export const PathFinder = (start: string, target: string, accessibility: string): string[] | null => {
+  return bfs(graph, start, target, accessibility);
+};

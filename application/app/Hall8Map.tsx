@@ -1,33 +1,32 @@
-import React, { useEffect } from "react";
+// Hall8Map.tsx
+import React from "react";
 import { StyleSheet } from "react-native";
-import Svg, { G, Circle, Text as SvgText } from "react-native-svg";
+import Svg, { Polyline, G, Circle, Text as SvgText } from "react-native-svg";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
-import Hall8 from "../assets/indoorMaps/Hall-8.svg";
+import Hall8 from "../assets/indoorMaps/Hall-8.svg"; // Your Hall 8 SVG
 
-const Hall8Map = () => {
-  const scale = useSharedValue(1);
+type Node = {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  floor?: string;
+  adjacent?: string[];
+};
+
+type Hall8MapProps = {
+  path: string[];
+};
+
+const Hall8Map = ({ path }: Hall8MapProps) => {
+  const scale = useSharedValue(0.55);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const savedScale = useSharedValue(1); 
 
-  // Reset scale on mount
-  useEffect(() => {
-    scale.value = 0.55;
-    savedScale.value = 1;
-    translateX.value = 0;
-    translateY.value = 0;
-  }, []);
-
-  const pinchGesture = Gesture.Pinch()
-    .onUpdate((event) => {
-      // Multiply the current scale by the event scale to get the new cumulative scale
-      scale.value = savedScale.value * event.scale;
-    })
-    .onEnd(() => {
-      // Save the final scale value after the pinch ends
-      savedScale.value = scale.value;
-    });
+  const pinchGesture = Gesture.Pinch().onUpdate((event) => {
+    scale.value = event.scale;
+  });
 
   const panGesture = Gesture.Pan().onUpdate((event) => {
     translateX.value = event.translationX;
@@ -42,7 +41,7 @@ const Hall8Map = () => {
     ],
   }));
 
-  const nodes = [
+  const nodes: Node[] = [
     //HALL 8th Floor
     //Middle Hallway top to bottom
         { id: "H1-U", type: "hallway", x: 555, y: 120, floor: "8", adjacent: ["H1-H2"]},
@@ -159,6 +158,24 @@ const Hall8Map = () => {
     { id: "H8-Bathroom-F", type: "Bathroom", x: 350, y: 260, floor: "8", adjacent: ["H2-ML"]},
   ];
 
+// Filter path to only include nodes on the 8th floor
+  const hall8Path = path.filter((nodeId) => nodes.some((n) => n.id === nodeId && n.floor === "8"));
+
+  const drawPath = (nodeIds: string[]) => {
+    if (nodeIds.length < 2) return null;
+
+    const pathData = nodeIds
+      .map((id) => {
+        const node = nodes.find((n) => n.id === id);
+        if (!node) return null;
+        return `${node.x},${node.y}`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
+    return <Polyline points={pathData} stroke="black" strokeWidth={6} fill="none" />;
+  };
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
@@ -166,25 +183,30 @@ const Hall8Map = () => {
           <Svg viewBox="0 0 1050 1050" preserveAspectRatio="xMidYMid meet">
             <G>
               <Hall8 />
+              {drawPath(hall8Path)}
               {nodes.map((node) => (
                 <G key={node.id}>
                   <Circle
                     cx={node.x}
                     cy={node.y}
-                    r={node.type === "hallway" ? 6 : 12} // Smaller radius for hallway nodes
-                    fill={node.type === "classroom" ? "orange" : node.type === "hallway" ? "green" : node.type === "Bathroom" ? "pink" : "blue"}
+                    r={node.type === "hallway" ? 6 : 12}
+                    fill={
+                      node.type === "classroom"
+                        ? "orange"
+                        : node.type === "hallway"
+                        ? "green"
+                        : node.type === "Bathroom"
+                        ? "pink"
+                        : "blue"
+                    }
                     stroke="black"
                     strokeWidth={2}
                   />
-                  <SvgText
-                    x={node.x}
-                    y={node.y - 15}
-                    fill="black"
-                    fontSize={node.type === "hallway" ? 15 : 25 } // Smaller font size for hallway nodes
-                    textAnchor="middle"
-                  >
-                    {node.type === "stairs" ? node.type:node.id && node.type === "hallway" ? "":node.id}
-                  </SvgText>
+                  {node.type !== "hallway" && (
+                    <SvgText x={node.x} y={node.y - 15} fill="black" fontSize={25} textAnchor="middle">
+                      {node.type === "stairs" ? node.type : node.id}
+                    </SvgText>
+                  )}
                 </G>
               ))}
             </G>
@@ -195,8 +217,6 @@ const Hall8Map = () => {
   );
 };
 
-export default Hall8Map;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -206,6 +226,8 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
 });
+
+export default Hall8Map;

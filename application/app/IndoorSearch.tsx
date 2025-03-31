@@ -1,12 +1,26 @@
+// IndoorSearch.tsx
 import React, { useState } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
-const IndoorSearch = ({ }) => {
-  const [startFloor, setStartFloor] = useState(null);
-  const [endFloor, setEndFloor] = useState(null);
-  const [startNode, setStartNode] = useState(null);
-  const [endNode, setEndNode] = useState(null);
+type IndoorSearchProps = {
+  nodes: GraphNode[]; // Pass nodes as a prop
+  onSearch: (startNode: string | null, endNode: string | null, travelType: string) => void; // Callback to parent
+};
+
+export type GraphNode = {
+  id: string;
+  type: string;
+  floor?: string;
+  adjacent?: string[];
+};
+
+
+const IndoorSearch = ({ nodes, onSearch }: IndoorSearchProps) => {
+  const [startFloor, setStartFloor] = useState<string | null>(null);
+  const [endFloor, setEndFloor] = useState<string | null>(null);
+  const [startNode, setStartNode] = useState<string | null>(null);
+  const [endNode, setEndNode] = useState<string | null>(null);
   const [travelType, setTravelType] = useState("standard");
 
   const nodes1 = [
@@ -178,63 +192,110 @@ const IndoorSearch = ({ }) => {
      { id: "40", type: "hallway", x: 530, y: 300, floor: "9", adjacent: ['4','33'] },
   ];
 
-  const nodesList = nodes1.filter((node) => node.type !== "hallway");
 
-  const floors = [...new Set(nodesList.map(node => node.floor))];
+  const nodesList = nodes.filter((node) => node.type !== "hallway");
+  const floors = [...new Set(nodesList.map((node) => node.floor))];
 
-    const filteredStartNodes = nodesList.filter(node => node.floor === startFloor);
-    const filteredEndNodes = nodesList.filter(node => node.floor === endFloor);
+  const filteredStartNodes = nodesList.filter((node) => node.floor === startFloor);
+  const filteredEndNodes = nodesList.filter((node) => node.floor === endFloor);
 
-    const handleSearch = () => {
-      console.log("Start Node:", startNode);
-      console.log("End Node:", endNode);
-      console.log("Travel Type:", travelType);
-    };
+  const handleSearch = () => {
+    onSearch(startNode, endNode, travelType); // Call the callback with selected values
+  };
 
 return (
-    <View>
-      <Text>Select Start Floor:</Text>
-      <Picker selectedValue={startFloor} onValueChange={setStartFloor}>
+    <View style={styles.container}>
+      <Text style={styles.label}>Start Floor:</Text>
+      <Picker
+        selectedValue={startFloor}
+        onValueChange={setStartFloor}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+      >
         <Picker.Item label="Select Floor" value={null} />
-        {floors.map(floor => (
+        {floors.map((floor) => (
           <Picker.Item key={floor} label={`Floor ${floor}`} value={floor} />
         ))}
       </Picker>
 
-      <Text>Select Start Location:</Text>
-      <Picker selectedValue={startNode} onValueChange={setStartNode}>
-        <Picker.Item label="Select Start Node" value={null} />
-        {filteredStartNodes.map(node => (
+      <Text style={styles.label}>Start Location:</Text>
+      <Picker
+        selectedValue={startNode}
+        onValueChange={setStartNode}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+      >
+        <Picker.Item label="Select Start" value={null} />
+        {filteredStartNodes.map((node) => (
           <Picker.Item key={node.id} label={node.id} value={node.id} />
         ))}
       </Picker>
 
-      <Text>Select End Floor:</Text>
-      <Picker selectedValue={endFloor} onValueChange={setEndFloor}>
+      <Text style={styles.label}>End Floor:</Text>
+      <Picker
+        selectedValue={endFloor}
+        onValueChange={setEndFloor}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+      >
         <Picker.Item label="Select Floor" value={null} />
-        {floors.map(floor => (
+        {floors.map((floor) => (
           <Picker.Item key={floor} label={`Floor ${floor}`} value={floor} />
         ))}
       </Picker>
 
-      <Text>Select End Location:</Text>
-      <Picker selectedValue={endNode} onValueChange={setEndNode}>
-        <Picker.Item label="Select End Node" value={null} />
-        {filteredEndNodes.map(node => (
+      <Text style={styles.label}>End Location:</Text>
+      <Picker
+        selectedValue={endNode}
+        onValueChange={setEndNode}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+      >
+        <Picker.Item label="Select End" value={null} />
+        {filteredEndNodes.map((node) => (
           <Picker.Item key={node.id} label={node.id} value={node.id} />
         ))}
       </Picker>
 
-      <Text>Select Travel Type:</Text>
-      <Picker selectedValue={travelType} onValueChange={setTravelType}>
+      <Text style={styles.label}>Travel Type:</Text>
+      <Picker
+        selectedValue={travelType}
+        onValueChange={setTravelType}
+        style={styles.picker}
+        itemStyle={styles.pickerItem}
+      >
         <Picker.Item label="Standard" value="standard" />
         <Picker.Item label="Active" value="active" />
         <Picker.Item label="Accessible" value="accessible" />
       </Picker>
 
-      <Button title="Search" onPress={handleSearch} />
+      <Button title="Search" onPress={handleSearch} color="#007AFF" />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    padding: 5,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    marginVertical: 5,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 2,
+    color: "#333",
+  },
+  picker: {
+    height: 50, // Increased to ensure text visibility
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    marginBottom: 5,
+    paddingHorizontal: 5, // Added padding for text alignment
+  },
+});
 
 export default IndoorSearch;
