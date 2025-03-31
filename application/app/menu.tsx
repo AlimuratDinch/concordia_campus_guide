@@ -25,14 +25,8 @@ export default function Index() {
         style={styles.button}
         onPress={() => router.push("/indoorMapScreen")}
       >
-        <Text style={styles.buttonText}>Hall Building Floor Map</Text>
+        <Text style={styles.buttonText}>Indoor Search</Text>
       </Pressable>
-      <Pressable
-              style={styles.button}
-              onPress={() => router.push("/IndoorSearch")}
-            >
-              <Text style={styles.buttonText}>IndoorSearch</Text>
-            </Pressable>
       <Pressable 
         style={styles.button}
         onPress={() => setIsFeedbackVisible(true)}
