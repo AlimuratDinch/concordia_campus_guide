@@ -20,7 +20,7 @@ type Hall9MapProps = {
 };
 
 const Hall9Map = ({ path }: Hall9MapProps) => {
-  const scale = useSharedValue(0.55);
+  const scale = useSharedValue(1.1);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
