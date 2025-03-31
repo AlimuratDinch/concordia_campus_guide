@@ -11,7 +11,7 @@ const IndoorMapScreen = () => {
   const [showHall8, setShowHall8] = useState(true);
   const [path, setPath] = useState<string[]>([]);
 
-  // Your full Rawnodes data (replace [...] with actual data)
+
   const Rawnodes: GraphNode[] = [
        //HALL 8th Floor
        //Middle Hallway top to bottom
