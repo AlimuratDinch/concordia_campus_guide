@@ -241,19 +241,20 @@ const IndoorMapScreen = () => {
   };
 
 return (
-  <SafeAreaView style={{ flex: 1 }}>
-    <View style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <Button
-          title={`Switch to Hall ${showHall8 ? "9" : "8"}`.toUpperCase()}
-          onPress={toggleMap}
-        />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.buttonContainer}>
+          <Button
+            title={`Switch to Hall ${showHall8 ? "9" : "8"}`.toUpperCase()}
+            onPress={toggleMap}
+          />
+        </View>
+        <IndoorSearch nodes={Rawnodes} onSearch={handleSearch} />
+        {showHall8 ? <Hall8Map path={path} /> : <Hall9Map path={path} />}
       </View>
-      <IndoorSearch nodes={Rawnodes} onSearch={handleSearch} />
-      {showHall8 ? <Hall8Map path={path} style={styles.map} /> : <Hall9Map path={path} style={styles.map} />}
-    </View>
-  </SafeAreaView>
-);
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -267,10 +268,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     zIndex: 1,
-  },
-  map: {
-    width: '100%', // Ensure the map takes the full width of the container
-    height: '80%', // Adjust height as needed to make it bigger
   },
 });
 
