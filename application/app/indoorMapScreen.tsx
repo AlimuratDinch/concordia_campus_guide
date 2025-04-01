@@ -7,12 +7,21 @@ import Hall8Map from "./Hall8Map";
 import Hall9Map from "./Hall9Map";
 import { PathFinder } from "./PathAlgorithmDev";
 
+export interface DisplayNode {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  floor: string;
+  adjacent?: string[]; // Ensure this matches object property names
+}
+
 const IndoorMapScreen = () => {
   const [showHall8, setShowHall8] = useState(true);
   const [path, setPath] = useState<string[]>([]);
 
-  // Your full Rawnodes data (replace [...] with actual data)
-  const Rawnodes: GraphNode[] = [
+
+  const Rawnodes: DisplayNode[] = [
        //HALL 8th Floor
        //Middle Hallway top to bottom
            { id: "H1-U", type: "hallway", x: 555, y: 120, floor: "8", adjacent: ["H1-H2"]},
