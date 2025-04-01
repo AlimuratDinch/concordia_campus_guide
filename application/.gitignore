@@ -49,5 +49,4 @@ app-example
 # config file
 app/config.ts
 
-# package-lock file
 package-lock.json
