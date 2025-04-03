@@ -1,0 +1,21 @@
+appId: com.bu_abd.minicap_concordia_campus_guide_app
+---
+- clearState
+- launchApp
+
+# Verify Sign Up screen is visible
+- assertVisible: "New student? Activate your account"
+- assertVisible: "Forgot password? (WIP)"
+# Fill out the signup form
+- tapOn: "Netname"
+- inputText: "ADMIN"
+
+- tapOn: "Password"
+- inputText: "ADMIN"
+
+# Submit the sign up form
+- tapOn: "Sign In"
+
+# Verify Home screen (post-signup navigation)
+- assertVisible: "Campus Map"
+- assertVisible: "Leave Feedback"
