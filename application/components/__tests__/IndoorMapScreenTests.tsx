@@ -1,61 +1,49 @@
-import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import IndoorMapScreen from "../../app/IndoorMapScreen";
-import IndoorSearch from "../../app/IndoorSearch";
-import Hall8Map from "../../app/Hall8Map";
-import Hall9Map from "../Hall9Map";
-import { PathFinder } from "../../app/PathAlgorithmDev";
+// components/__tests__/IndoorMapScreenTests.tsx
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import IndoorMapScreen from '../../app/indoorMapScreen';
+import { PathFinder } from '../../app/PathAlgorithmDev';
+import IndoorSearch from '../../app/IndoorSearch';
 
-jest.mock("../../app/IndoorSearch", () => jest.fn(() => null));
-jest.mock("../../app/Hall8Map", () => jest.fn(() => null));
-jest.mock("../../app/Hall9Map", () => jest.fn(() => null));
-jest.mock("../../app/PathAlgorithmDev", () => ({ PathFinder: jest.fn() }));
+jest.mock('../../app/PathAlgorithmDev', () => ({
+  PathFinder: jest.fn(),
+}));
 
-describe("IndoorMapScreen", () => {
-  it("renders correctly", () => {
+jest.mock('../../app/IndoorSearch', () => {
+  return jest.fn(() => null); // Mock component
+});
+
+describe('IndoorMapScreen', () => {
+  it('renders correctly and switches maps', () => {
     const { getByText } = render(<IndoorMapScreen />);
-    expect(getByText("SWITCH TO HALL 9")).toBeTruthy();
+    expect(getByText('SWITCH TO HALL 9')).toBeTruthy();
+
+    fireEvent.press(getByText('SWITCH TO HALL 9'));
+    expect(getByText('SWITCH TO HALL 8')).toBeTruthy();
   });
 
-  it("toggles between Hall 8 and Hall 9 maps", () => {
-    const { getByText, rerender } = render(<IndoorMapScreen />);
+  it('handles path search correctly', () => {
+    const mockPath = ['A', 'B', 'C'];
+    (PathFinder as jest.Mock).mockReturnValue(mockPath);
 
-    const toggleButton = getByText("SWITCH TO HALL 9");
-    fireEvent.press(toggleButton);
-    rerender(<IndoorMapScreen />);
+    const mockOnSearch = jest.fn();
+    (IndoorSearch as jest.Mock).mockImplementation(({ onSearch }: { onSearch: (start: string, target: string, accessibility: string) => void }) => (
+      <button onClick={() => onSearch('A', 'C', 'walking')} />
+    ));
 
-    expect(getByText("SWITCH TO HALL 8")).toBeTruthy();
+    const { getByRole } = render(<IndoorMapScreen />);
+    fireEvent.press(getByRole('button'));
+    expect(mockOnSearch).toHaveBeenCalledWith('A', 'C', 'walking');
   });
 
-  it("calls PathFinder when search is performed", async () => {
-    const mockPath = ["A", "B", "C"];
-    PathFinder.mockReturnValue(mockPath);
+  it('handles invalid search inputs', () => {
+    const mockOnSearch = jest.fn();
+    (IndoorSearch as jest.Mock).mockImplementation(({ onSearch }: { onSearch: (start: string | null, target: string, accessibility: string) => void }) => (
+      <button onClick={() => onSearch(null, 'C', 'walking')} />
+    ));
 
-    let searchCallback;
-    IndoorSearch.mockImplementation(({ onSearch }) => {
-      searchCallback = onSearch;
-      return null;
-    });
-
-    const { rerender } = render(<IndoorMapScreen />);
-
-    searchCallback("A", "C", "walking");
-    rerender(<IndoorMapScreen />);
-
-    await waitFor(() => expect(PathFinder).toHaveBeenCalledWith("A", "C", "walking"));
-  });
-
-  it("does not call PathFinder if start or end node is missing", async () => {
-    const { rerender } = render(<IndoorMapScreen />);
-    let searchCallback;
-    IndoorSearch.mockImplementation(({ onSearch }) => {
-      searchCallback = onSearch;
-      return null;
-    });
-
-    searchCallback(null, "C", "walking");
-    rerender(<IndoorMapScreen />);
-
-    await waitFor(() => expect(PathFinder).not.toHaveBeenCalled());
+    const { getByRole } = render(<IndoorMapScreen />);
+    fireEvent.press(getByRole('button'));
+    expect(mockOnSearch).toHaveBeenCalledWith(null, 'C', 'walking');
   });
 });

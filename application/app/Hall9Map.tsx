@@ -1,23 +1,24 @@
 // Hall9Map.tsx
 import React from "react";
-import { StyleSheet } from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Svg, { Polyline, G, Circle, Text as SvgText } from "react-native-svg";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
 import Hall9 from "../assets/indoorMaps/Hall-9.svg";
 
-type Node = {
+interface Node {
   id: string;
   type: string;
   x: number;
   y: number;
-  floor?: string;
+  floor: string;
   adjacent?: string[];
 };
 
-type Hall9MapProps = {
+interface Hall9MapProps {
   path: string[];
-};
+  style?: StyleProp<ViewStyle>; // Add this
+}
 
 const Hall9Map = ({ path }: Hall9MapProps) => {
   const scale = useSharedValue(0.55);

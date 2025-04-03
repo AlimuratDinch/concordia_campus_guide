@@ -1,4 +1,4 @@
-import { buildGraph, filteredGraph, PathFinder } from "../../app/PathAlgorithmDev.ts";
+import { buildGraph, filteredGraph, PathFinder } from "../../app/PathAlgorithmDev";
 
 describe("Graph Utilities", () => {
   const sampleNodes = [

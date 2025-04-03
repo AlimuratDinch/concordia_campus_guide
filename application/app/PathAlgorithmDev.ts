@@ -1,12 +1,18 @@
+// Define GraphNode to match Rawnodes structure
 type GraphNode = {
   id: string;
   type: string;
-  adjacent?: string[];
+  adjacent?: string[]; // Optional as per your definition
+  x?: number;          // Optional to match Rawnodes
+  y?: number;          // Optional to match Rawnodes
+  floor?: string;      // Optional to match Rawnodes
 };
 
+// Define Graph type for adjacency list
 type Graph = Record<string, { type: string; adjacent: string[] }>;
 
-const Rawnodes = [
+// Rawnodes with full structure (8th floor complete, 9th floor needs adjacent)
+const Rawnodes: GraphNode[] = [
        //HALL 8th Floor
        //Middle Hallway top to bottom
            { id: "H1-U", type: "hallway", x: 555, y: 120, floor: "8", adjacent: ["H1-H2"]},
@@ -213,16 +219,14 @@ const Rawnodes = [
        { id: "40", type: "hallway", x: 530, y: 300, floor: "9", adjacent: ['4','33'] },
  ];
 
-const filteredNodes = Rawnodes.map(({ id, type, adjacent }) => ({ id, type, adjacent }));
-const nodes: GraphNode[] = filteredNodes;
-
-const buildGraph = (nodes: GraphNode[]): Graph => {
+// Build the graph from nodes
+export const buildGraph = (nodes: GraphNode[]): Graph => {
   const graph: Graph = {};
 
   nodes.forEach((node) => {
     graph[node.id] = {
       type: node.type,
-      adjacent: node.adjacent ? [...node.adjacent] : [], // Copy adjacent array
+      adjacent: node.adjacent ? [...node.adjacent] : [], // Copy adjacent array or default to empty
     };
 
     if (node.adjacent) {
@@ -245,7 +249,10 @@ const buildGraph = (nodes: GraphNode[]): Graph => {
   return graph;
 };
 
-const filteredGraph = (graph: Graph, accessibility: string): Graph => {
+// Export the pre-built graph
+export const graph = buildGraph(Rawnodes);
+
+export const filteredGraph = (graph: Graph, accessibility: string): Graph => {
   const filteredGraph: Graph = {};
 
   for (const nodeId in graph) {
@@ -280,7 +287,7 @@ const filteredGraph = (graph: Graph, accessibility: string): Graph => {
   return filteredGraph;
 };
 
-const bfs = (graph: Graph, start: string, target: string, accessibility: string): string[] | null => {
+export const bfs = (graph: Graph, start: string, target: string, accessibility: string): string[] | null => {
   const filtered = filteredGraph(graph, accessibility);
 
   const queue: string[][] = [[start]];
@@ -309,9 +316,6 @@ const bfs = (graph: Graph, start: string, target: string, accessibility: string)
   console.log("No path found.");
   return null;
 };
-
-// Build the graph once
-const graph = buildGraph(nodes);
 
 // Export PathFinder with pre-inserted graph
 export const PathFinder = (start: string, target: string, accessibility: string): string[] | null => {

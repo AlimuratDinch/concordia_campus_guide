@@ -5,10 +5,10 @@ import IndoorSearch, { GraphNode } from "../../app/IndoorSearch";
 describe("IndoorSearch Component", () => {
   const mockOnSearch = jest.fn();
   const mockNodes: GraphNode[] = [
-    { id: "801", type: "classroom", floor: "8", adjacent: ["802"] },
-    { id: "802", type: "classroom", floor: "8", adjacent: ["801"] },
-    { id: "901", type: "classroom", floor: "9", adjacent: ["902"] },
-    { id: "902", type: "classroom", floor: "9", adjacent: ["901"] },
+    { id: "801", type: "classroom", x: 0, y: 0, floor: "8", adjacent: ["802"] },
+    { id: "802", type: "classroom", x: 10, y: 10, floor: "8", adjacent: ["801"] },
+    { id: "901", type: "classroom", x: 20, y: 20, floor: "9", adjacent: ["902"] },
+    { id: "902", type: "classroom", x: 30, y: 30, floor: "9", adjacent: ["901"] },
   ];
 
   it("renders correctly", () => {
