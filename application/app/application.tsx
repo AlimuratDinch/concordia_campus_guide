@@ -133,11 +133,11 @@ const ConcordiaApp = () => {
                     <Text style={styles.shuttleItemTitle}>Shuttle schedule (WIP)</Text>
                   </TouchableOpacity>
                   
-                  <TouchableOpacity style={styles.shuttleItem} onPress={() => router.push('/')}>
+                  <TouchableOpacity style={styles.shuttleItem} onPress={() => router.push('/shuttleMap')}>
                     <View style={styles.shuttleIconContainer}>
                       <Ionicons name="location" size={24} color="#912338" />
                     </View>
-                    <Text style={styles.shuttleItemTitle}>Shuttle tracker (WIP)</Text>
+                    <Text style={styles.shuttleItemTitle}>Shuttle tracker</Text>
                   </TouchableOpacity>
                 </View>
               </View>
