@@ -9,13 +9,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app",
-      "config": {
-        "googleMapsApiKey": "${API_KEY}"
-      }
-    },
     "android": {
       "config": {
         "googleMaps": {
@@ -54,18 +47,14 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
     },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "d9969820-a941-4f15-ace8-abf24bce7748"
-      }
+    "ios": {
+      "bundleIdentifier": "com.bu-abd.minicap-concordia-campus-guide-app"
     }
   }
 }

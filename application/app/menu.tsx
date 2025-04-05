@@ -21,7 +21,12 @@ export default function Index() {
       >
         <Text style={styles.buttonText}>Schedule</Text>
       </Pressable>
-      
+      <Pressable 
+        style={styles.button}
+        onPress={() => router.push("/IndoorHall8Map")}
+      >
+        <Text style={styles.buttonText}>Indoor Search</Text>
+      </Pressable>
       <Pressable 
         style={styles.button}
         onPress={() => setIsFeedbackVisible(true)}

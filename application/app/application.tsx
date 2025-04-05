@@ -112,6 +112,7 @@ const ConcordiaApp = () => {
                   <IconLabel name="business" title="SGW buildings (WIP)" onPress={() => router.push('/')} />
                   <IconLabel name="car" title="Parking map (WIP)" onPress={() => router.push('/')} />
                   <IconLabel name="bicycle" title="Bike rack map (WIP)" onPress={() => router.push('/')} />
+                  <IconLabel name="map" title="Indoor Map" onPress={() => router.push('/indoorMapScreen')} />
                 </View>
                 
                 {/* LOY SECTION */}
