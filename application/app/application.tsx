@@ -126,11 +126,11 @@ const ConcordiaApp = () => {
                 {/* SHUTTLE BUS SECTION */}
                 <Text style={styles.campusHeader}>Shuttle bus</Text>
                 <View style={styles.shuttleSection}>
-                  <TouchableOpacity style={styles.shuttleItem} onPress={() => router.push('/')}>
+                  <TouchableOpacity style={styles.shuttleItem} onPress={() => router.push('/shuttleInfo')}>
                     <View style={styles.shuttleIconContainer}>
                       <Ionicons name="bus" size={24} color="#912338" />
                     </View>
-                    <Text style={styles.shuttleItemTitle}>Shuttle schedule (WIP)</Text>
+                    <Text style={styles.shuttleItemTitle}>Shuttle Informations</Text>
                   </TouchableOpacity>
                   
                   <TouchableOpacity style={styles.shuttleItem} onPress={() => router.push('/shuttleMap')}>
