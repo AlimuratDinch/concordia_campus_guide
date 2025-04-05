@@ -1,3 +1,4 @@
+
 // PathAlgorithmDev.ts
 import { GraphNode, Rawnodes } from "./nodesData"; // Adjust path based on your file structure
 
@@ -34,7 +35,6 @@ export const buildGraph = (nodes: GraphNode[]): Graph => {
   return graph;
 };
 
-// Export the pre-built graph using Rawnodes
 export const graph = buildGraph(Rawnodes);
 
 export const filteredGraph = (graph: Graph, accessibility: string): Graph => {
