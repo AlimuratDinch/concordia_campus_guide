@@ -6,6 +6,7 @@ const shuttleMap: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <WebView
+        testID='shuttle-webview'
         source={{ uri: 'https://shuttle.concordia.ca/concordiabusmap/' }}
         style={styles.webview}
       />

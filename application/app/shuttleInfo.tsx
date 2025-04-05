@@ -33,7 +33,7 @@ const ShuttleInfo: React.FC = () => {
             {/* Row 1: Monday–Thursday & Friday */}
             <View style={styles.dayRow}>
               {/* Monday–Thursday */}
-              <View style={styles.dayBlock}>
+              <View style={styles.dayBlock} testID='monday-thursday-block'>
                 <Text style={styles.dayTitle}>Monday – Thursday</Text>
                 <View style={styles.headerRow}>
                   <Text style={styles.headerCell}>LOY</Text>
@@ -50,7 +50,7 @@ const ShuttleInfo: React.FC = () => {
               </View>
 
               {/* Friday */}
-              <View style={styles.dayBlock}>
+              <View style={styles.dayBlock} testID='friday-block'>
                 <Text style={styles.dayTitle}>Friday</Text>
                 <View style={styles.headerRow}>
                   <Text style={styles.headerCell}>LOY</Text>
