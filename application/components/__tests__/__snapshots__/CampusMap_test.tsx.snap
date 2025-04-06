@@ -66,6 +66,76 @@ exports[`CampusMap renders without crashing (snapshot) 1`] = `
   <View
     style={
       {
+        "alignItems": "center",
+        "bottom": 60,
+        "left": 20,
+        "position": "absolute",
+        "right": 20,
+      }
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#900",
+          "borderRadius": 5,
+          "elevation": 3,
+          "opacity": 1,
+          "paddingHorizontal": 20,
+          "paddingVertical": 10,
+          "shadowColor": "#000",
+          "shadowOffset": {
+            "height": 2,
+            "width": 0,
+          },
+          "shadowOpacity": 0.25,
+          "shadowRadius": 3.84,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "white",
+            "fontSize": 16,
+            "fontWeight": "bold",
+          }
+        }
+      >
+        Set Current Building as Start
+      </Text>
+    </View>
+  </View>
+  <View
+    style={
+      {
         "left": 10,
         "position": "absolute",
         "right": 10,
