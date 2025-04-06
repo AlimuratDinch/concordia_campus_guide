@@ -1,45 +1,67 @@
 import React from "react";
-import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
-import Svg, { Polyline, G, Circle, Text as SvgText } from "react-native-svg";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
-import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
-import { GraphNode } from "./nodesData"; // Adjust path
+import {
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
+import Svg, { Polyline, G, Text as SvgText } from "react-native-svg";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
+import { GraphNode } from "./nodesData";
+
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 interface FloorMapProps {
   floor: string;
   nodes: GraphNode[];
   path: string[];
-  BackgroundSvg: React.FC; // SVG component for the floor
+  BackgroundSvg: React.FC;
   style?: StyleProp<ViewStyle>;
 }
 
-export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapProps) => {
-  const scale = useSharedValue(0.55);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
+export const FloorMap = ({
+  floor,
+  nodes,
+  path,
+  BackgroundSvg,
+  style,
+}: FloorMapProps) => {
+  const scale = useSharedValue(1); // Initial zoom scale
+  const translateX = useSharedValue(0); // Translation in X
+  const translateY = useSharedValue(0); // Translation in Y
 
-//Component to refactor
+  // Pinch gesture to control zooming
   const pinchGesture = Gesture.Pinch().onUpdate((event) => {
-
-    scale.value = event.scale;
+    scale.value = withSpring(event.scale); // Smooth zoom
   });
 
+  // Pan gesture to move the map around
   const panGesture = Gesture.Pan().onUpdate((event) => {
-
-    translateX.value = event.translationX;
-    translateY.value = event.translationY;
+    translateX.value = withSpring(event.translationX);
+    translateY.value = withSpring(event.translationY);
   });
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { scale: scale.value },
-      { translateX: translateX.value },
-      { translateY: translateY.value },
+      { scale: scale.value }, // Zooming the map
+      { translateX: translateX.value }, // Moving map horizontally
+      { translateY: translateY.value }, // Moving map vertically
     ],
   }));
 
-  // Filter path to only include nodes on this floor
-  const floorPath = path.filter((nodeId) => nodes.some((n) => n.id === nodeId && n.floor === floor));
+  const floorPath = path.filter((nodeId) =>
+    nodes.some((n) => n.id === nodeId && n.floor === floor)
+  );
 
   const drawPath = (nodeIds: string[]) => {
     if (nodeIds.length < 2) return null;
@@ -56,51 +78,67 @@ export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapP
     return <Polyline points={pathData} stroke="black" strokeWidth={6} fill="none" />;
   };
 
+  const getIconGlyph = (type: string) => {
+    const map: { [key: string]: string } = {
+      classroom: "▫️",
+      hallway: "",
+      Bathroom: "🚻",
+      stairs: "🪜",
+      elevators: "🛗",
+      escalators: "📶",
+      default: "."
+    };
+    return map[type] || map.default;
+  };
+
   return (
     <GestureHandlerRootView style={[styles.container, style]}>
       <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
         <Animated.View style={[styles.mapContainer, animatedStyle]}>
-          <Svg viewBox="0 0 1050 1050" preserveAspectRatio="xMidYMid meet">
+          <AnimatedSvg
+            viewBox="0 0 1050 1050"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ width: "100%", height: "100%" }}
+          >
             <G>
               <BackgroundSvg />
               {drawPath(floorPath)}
-              {nodes.map((node) => (
-                <G key={node.id}>
-                  {node.x !== undefined && node.y !== undefined && (
-                    <>
-                      <Circle
-                        cx={node.x}
-                        cy={node.y}
-                        r={node.type === "hallway" ? 6 : 12}
-                        fill={
-                          node.type === "classroom"
-                            ? "orange"
-                            : node.type === "hallway"
-                            ? "green"
-                            : node.type === "Bathroom"
-                            ? "pink"
-                            : "blue"
-                        }
-                        stroke="black"
-                        strokeWidth={2}
-                      />
-                      {node.type !== "hallway" && (
-                        <SvgText
-                          x={node.x}
-                          y={node.y - 15}
-                          fill="black"
-                          fontSize={25}
-                          textAnchor="middle"
-                        >
-                          {node.type === "stairs" ? node.type : node.id}
-                        </SvgText>
-                      )}
-                    </>
-                  )}
-                </G>
-              ))}
+              {nodes.map((node) => {
+                if (
+                  node.x === undefined ||
+                  node.y === undefined ||
+                  node.floor !== floor
+                )
+                  return null;
+
+                return (
+                  <G key={node.id}>
+                    <SvgText
+                      x={node.x}
+                      y={node.y}
+                      fontSize={40}
+                      textAnchor="middle"
+                      alignmentBaseline="middle"
+                    >
+                      {getIconGlyph(node.type)}
+                    </SvgText>
+                    {node.type !== "hallway" && (
+                      <SvgText
+                        x={node.x}
+                        y={node.y + 40}
+                        fontSize={20}
+                        fill="black"
+                        textAnchor="middle"
+                        fontWeight="bold"
+                      >
+                        {node.type === "stairs" ? "stairs" : node.id}
+                      </SvgText>
+                    )}
+                  </G>
+                );
+              })}
             </G>
-          </Svg>
+          </AnimatedSvg>
         </Animated.View>
       </GestureDetector>
     </GestureHandlerRootView>
@@ -115,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mapContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%",
+    height: "100%",
   },
 });
