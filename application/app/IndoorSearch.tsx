@@ -1,8 +1,7 @@
-// IndoorSearch.tsx
 import React, { useState, useMemo } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { GraphNode, nodes } from "./nodesData"; // Adjust path
+import { GraphNode, Rawnodes as nodes } from "./nodesData"; // Adjust path
 
 interface IndoorSearchProps {
   nodes?: GraphNode[]; // Optional, defaults to imported nodes
@@ -37,7 +36,7 @@ const FloorPicker: React.FC<{
       itemStyle={styles.pickerItem}
     >
       <Picker.Item label="Select Floor" value={null} />
-      {floors.map(floor => (
+      {floors.map((floor) => (
         <Picker.Item key={floor} label={`Floor ${floor}`} value={floor} />
       ))}
     </Picker>
@@ -59,7 +58,7 @@ const NodePicker: React.FC<{
       itemStyle={styles.pickerItem}
     >
       <Picker.Item label={`Select ${label.split(" ")[1]}`} value={null} />
-      {nodes.map(node => (
+      {nodes.map((node) => (
         <Picker.Item key={node.id} label={node.id} value={node.id} />
       ))}
     </Picker>
@@ -78,7 +77,7 @@ const TravelTypePicker: React.FC<{
       style={styles.picker}
       itemStyle={styles.pickerItem}
     >
-      {TRAVEL_OPTIONS.map(option => (
+      {TRAVEL_OPTIONS.map((option) => (
         <Picker.Item key={option.value} label={option.label} value={option.value} />
       ))}
     </Picker>
@@ -93,14 +92,21 @@ const IndoorSearch: React.FC<IndoorSearchProps> = ({ nodes: propNodes = nodes, o
   const [travelType, setTravelType] = useState<TravelType>(TravelType.Standard);
 
   // Memoize derived data to avoid unnecessary recalculations
-  const filteredNodes = useMemo(() => propNodes.filter(node => node.type !== "hallway"), [propNodes]);
-  const floors = useMemo(() => [...new Set(filteredNodes.map(node => node.floor))], [filteredNodes]);
+  const filteredNodes = useMemo(
+    () => propNodes.filter((node: GraphNode) => node.type !== "hallway"),
+    [propNodes]
+  );
+  const floors = useMemo(
+    () =>
+      [...new Set(filteredNodes.map((node: GraphNode) => node.floor).filter((floor): floor is string => floor !== undefined))],
+    [filteredNodes]
+  );
   const filteredStartNodes = useMemo(
-    () => filteredNodes.filter(node => node.floor === startFloor),
+    () => filteredNodes.filter((node: GraphNode) => node.floor === startFloor),
     [filteredNodes, startFloor]
   );
   const filteredEndNodes = useMemo(
-    () => filteredNodes.filter(node => node.floor === endFloor),
+    () => filteredNodes.filter((node: GraphNode) => node.floor === endFloor),
     [filteredNodes, endFloor]
   );
 
@@ -115,7 +121,12 @@ const IndoorSearch: React.FC<IndoorSearchProps> = ({ nodes: propNodes = nodes, o
   return (
     <View style={styles.container}>
       <FloorPicker label="Start Floor" value={startFloor} onChange={setStartFloor} floors={floors} />
-      <NodePicker label="Start Location" value={startNode} onChange={setStartNode} nodes={filteredStartNodes} />
+      <NodePicker
+        label="Start Location"
+        value={startNode}
+        onChange={setStartNode}
+        nodes={filteredStartNodes}
+      />
       <FloorPicker label="End Floor" value={endFloor} onChange={setEndFloor} floors={floors} />
       <NodePicker label="End Location" value={endNode} onChange={setEndNode} nodes={filteredEndNodes} />
       <TravelTypePicker value={travelType} onChange={setTravelType} />
