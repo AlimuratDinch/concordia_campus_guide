@@ -4,8 +4,8 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function Schedule() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [, setIsSignedIn] = useState(false);
+  const [, setLoading] = useState(true);
 
   const timeSlots = Array.from({ length: 31 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
@@ -130,8 +130,8 @@ const getEventPosition = (dateTime: string): number => {
             <View style={styles.schedule}>
               {/* Time Column */}
               <View style={styles.timeColumn}>
-                {timeSlots.map((time, index) => (
-                  <View key={index} style={styles.timeSlot}>
+                {timeSlots.map((time) => (
+                  <View key={time} style={styles.timeSlot}>
                     <Text style={styles.timeText}>{time}</Text>
                   </View>
                 ))}
@@ -139,8 +139,8 @@ const getEventPosition = (dateTime: string): number => {
 
               {/* Days Columns */}
               <View style={styles.weekContainer}>
-                {weekDays.map((day, dayIndex) => (
-                  <View key={dayIndex} style={styles.dayColumn}>
+                {weekDays.map((day) => (
+                  <View key={`${day}`} style={styles.dayColumn}>
                     {timeSlots.map((_, slotIndex) => (
                       <View key={slotIndex} style={styles.timeBlock} />
                     ))}

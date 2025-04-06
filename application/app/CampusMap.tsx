@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, Alert, Linking,} from "react-native";
+import {StyleSheet, View, Text, TouchableOpacity, Alert, Linking,} from "react-native";
 import MapView, { Polygon, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import SearchBar from './components/SearchBar';
@@ -145,7 +145,7 @@ export default function CampusMap() {
   const getLocationPermission = async () => {
     try {
         const permission = await Location.requestForegroundPermissionsAsync();
-        if (!permission || !permission.status) {
+        if (!permission?.status) {
             throw new Error("Location permission request failed");
         }
 

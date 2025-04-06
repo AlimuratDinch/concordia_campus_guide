@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Svg, { Polyline, G, Circle, Text as SvgText } from "react-native-svg";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
@@ -23,6 +23,20 @@ export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapP
 
     scale.value = event.scale;
   });
+
+  const getNodeColor = (type: string): string => {
+    switch (type.toLowerCase()) {
+      case "classroom":
+        return "orange";
+      case "hallway":
+        return "green";
+      case "bathroom":
+        return "pink";
+      default:
+        return "blue";
+    }
+  };
+  
 
   const panGesture = Gesture.Pan().onUpdate((event) => {
 
@@ -72,15 +86,7 @@ export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapP
                         cx={node.x}
                         cy={node.y}
                         r={node.type === "hallway" ? 6 : 12}
-                        fill={
-                          node.type === "classroom"
-                            ? "orange"
-                            : node.type === "hallway"
-                            ? "green"
-                            : node.type === "Bathroom"
-                            ? "pink"
-                            : "blue"
-                        }
+                        fill={getNodeColor(node.type)}
                         stroke="black"
                         strokeWidth={2}
                       />
