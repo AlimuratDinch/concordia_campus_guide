@@ -1,0 +1,109 @@
+// FloorMap.tsx
+import React from "react";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import Svg, { Polyline, G, Circle, Text as SvgText } from "react-native-svg";
+import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { GraphNode } from "./nodesData"; // Adjust path
+
+interface FloorMapProps {
+  floor: string;
+  nodes: GraphNode[];
+  path: string[];
+  BackgroundSvg: React.FC; // SVG component for the floor
+  style?: StyleProp<ViewStyle>;
+}
+
+export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapProps) => {
+  const scale = useSharedValue(0.55);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+
+  const pinchGesture = Gesture.Pinch().onUpdate((event) => {
+    scale.value = event.scale;
+  });
+
+  const panGesture = Gesture.Pan().onUpdate((event) => {
+    translateX.value = event.translationX;
+    translateY.value = event.translationY;
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: scale.value },
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+  }));
+
+  // Filter path to only include nodes on this floor
+  const floorPath = path.filter((nodeId) => nodes.some((n) => n.id === nodeId && n.floor === floor));
+
+  const drawPath = (nodeIds: string[]) => {
+    if (nodeIds.length < 2) return null;
+
+    const pathData = nodeIds
+      .map((id) => {
+        const node = nodes.find((n) => n.id === id);
+        if (!node) return null;
+        return `${node.x},${node.y}`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
+    return <Polyline points={pathData} stroke="black" strokeWidth={6} fill="none" />;
+  };
+
+  return (
+    <GestureHandlerRootView style={[styles.container, style]}>
+      <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
+        <Animated.View style={[styles.mapContainer, animatedStyle]}>
+          <Svg viewBox="0 0 1050 1050" preserveAspectRatio="xMidYMid meet">
+            <G>
+              <BackgroundSvg />
+              {drawPath(floorPath)}
+              {nodes.map((node) => (
+                <G key={node.id}>
+                  <Circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={node.type === "hallway" ? 6 : 12}
+                    fill={
+                      node.type === "classroom"
+                        ? "orange"
+                        : node.type === "hallway"
+                        ? "green"
+                        : node.type === "Bathroom"
+                        ? "pink"
+                        : "blue"
+                    }
+                    stroke="black"
+                    strokeWidth={2}
+                  />
+                  {node.type !== "hallway" && (
+                    <SvgText x={node.x} y={node.y - 15} fill="black" fontSize={25} textAnchor="middle">
+                      {node.type === "stairs" ? node.type : node.id}
+                    </SvgText>
+                  )}
+                </G>
+              ))}
+            </G>
+          </Svg>
+        </Animated.View>
+      </GestureDetector>
+    </GestureHandlerRootView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mapContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
