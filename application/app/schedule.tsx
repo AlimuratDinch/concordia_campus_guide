@@ -5,8 +5,10 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 export default function Schedule() {
   const [events, setEvents] = useState<Event[]>([]);
   // commented out because they are never used
-  const [/*isSignedIn*/, setIsSignedIn] = useState(false);
-  const [/*isLoading*/, setLoading] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+
+  
 
   const timeSlots = Array.from({ length: 31 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
@@ -84,6 +86,7 @@ const fetchCalendarEvents = async (accessToken: string) => {
   const getAccessTokenAndFetchEvents = async () => {
     try {
       const userInfo = await GoogleSignin.signInSilently();
+      if(isLoading === true && isSignedIn === false){}
       if (userInfo) {
         setIsSignedIn(true);
         const tokens = await GoogleSignin.getTokens();
