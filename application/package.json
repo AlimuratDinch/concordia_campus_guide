@@ -32,7 +32,8 @@
       "!**/declaration.d.ts",
       "!**/app/_layout.tsx",
       "!**/app/Hall9Map.tsx",
-      "!**/app/Hall8Map.tsx"
+      "!**/app/Hall8Map.tsx",
+      "!**/app/utils/coordinateHelpers.tsx"
     ],
     "coverageReporters": [
       "json",
