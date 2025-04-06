@@ -24,7 +24,13 @@
       "!**/expo-env.d.ts",
       "!**/.expo/**",
       "!**/.eslintrc.js",
-      "!**/android/**"
+      "!**/android/**",
+      "!**/app/_layout.tsx",
+      "!**/app/menu.tsx",
+      "!**/metro.config.js",
+      "!**/app.config.js",
+      "!**/declaration.d.ts",
+      "!**/app/_layout.tsx"
     ],
     "coverageReporters": [
       "json",

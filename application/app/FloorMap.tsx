@@ -1,4 +1,3 @@
-// FloorMap.tsx
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Svg, { Polyline, G, Circle, Text as SvgText } from "react-native-svg";
@@ -45,10 +44,10 @@ export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapP
     const pathData = nodeIds
       .map((id) => {
         const node = nodes.find((n) => n.id === id);
-        if (!node) return null;
+        if (!node || node.x === undefined || node.y === undefined) return null;
         return `${node.x},${node.y}`;
       })
-      .filter(Boolean)
+      .filter((point): point is string => point !== null)
       .join(" ");
 
     return <Polyline points={pathData} stroke="black" strokeWidth={6} fill="none" />;
@@ -64,26 +63,36 @@ export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapP
               {drawPath(floorPath)}
               {nodes.map((node) => (
                 <G key={node.id}>
-                  <Circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={node.type === "hallway" ? 6 : 12}
-                    fill={
-                      node.type === "classroom"
-                        ? "orange"
-                        : node.type === "hallway"
-                        ? "green"
-                        : node.type === "Bathroom"
-                        ? "pink"
-                        : "blue"
-                    }
-                    stroke="black"
-                    strokeWidth={2}
-                  />
-                  {node.type !== "hallway" && (
-                    <SvgText x={node.x} y={node.y - 15} fill="black" fontSize={25} textAnchor="middle">
-                      {node.type === "stairs" ? node.type : node.id}
-                    </SvgText>
+                  {node.x !== undefined && node.y !== undefined && (
+                    <>
+                      <Circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={node.type === "hallway" ? 6 : 12}
+                        fill={
+                          node.type === "classroom"
+                            ? "orange"
+                            : node.type === "hallway"
+                            ? "green"
+                            : node.type === "Bathroom"
+                            ? "pink"
+                            : "blue"
+                        }
+                        stroke="black"
+                        strokeWidth={2}
+                      />
+                      {node.type !== "hallway" && (
+                        <SvgText
+                          x={node.x}
+                          y={node.y - 15}
+                          fill="black"
+                          fontSize={25}
+                          textAnchor="middle"
+                        >
+                          {node.type === "stairs" ? node.type : node.id}
+                        </SvgText>
+                      )}
+                    </>
                   )}
                 </G>
               ))}

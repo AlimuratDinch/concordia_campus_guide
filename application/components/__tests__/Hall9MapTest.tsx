@@ -1,7 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
-import Hall8Map from "../../app/Hall9Map"; // adjust path as needed
-import { filterNodesByFloor } from "../../app/utils"; // adjust path
+import Hall9Map from "../../app/Hall9Map"; // Adjust path as needed
+import { filterNodesByFloor } from "../../app/utils"; // Adjust path
+import { StyleProp, ViewStyle } from "react-native";
+import { GraphNode } from "../../app/nodesData"; // Import GraphNode type
 
 // Mock the SVG component
 jest.mock("../../assets/indoorMaps/Hall-9.svg", () => "Hall9Svg");
@@ -11,18 +13,24 @@ jest.mock("../../app/utils", () => ({
   filterNodesByFloor: jest.fn(),
 }));
 
-// Mock FloorMap with testID
+// Define props interface for the mocked FloorMap
+interface MockFloorMapProps {
+  floor: string;
+  nodes: GraphNode[];
+  path: string[];
+  BackgroundSvg: React.FC;
+  style?: StyleProp<ViewStyle>;
+}
+
+// Mock FloorMap with testID, importing View inside the factory
 jest.mock("../../app/FloorMap", () => {
+  const { View } = require("react-native");
   return {
-    FloorMap: ({ floor, nodes, path, BackgroundSvg, style }) => {
+    FloorMap: ({ floor, nodes, path, BackgroundSvg, style }: MockFloorMapProps) => {
       return (
-        <mock-FloorMap
+        <View
           testID="mock-FloorMap"
-          floor={floor}
-          nodes={nodes}
-          path={path}
-          BackgroundSvg={BackgroundSvg}
-          style={style}
+          {...{ floor, nodes, path, BackgroundSvg, style }}
         />
       );
     },
@@ -39,7 +47,7 @@ describe("Hall9Map", () => {
     const path = ["X", "Y"];
     const style = { flex: 1 };
 
-    const { getByTestId } = render(<Hall8Map path={path} style={style} />);
+    const { getByTestId } = render(<Hall9Map path={path} style={style} />);
 
     const floorMap = getByTestId("mock-FloorMap");
 
