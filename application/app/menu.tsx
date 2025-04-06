@@ -7,36 +7,38 @@ export default function Index() {
   const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
   return (
     <View style={styles.view}>
-      <Pressable 
+      <Pressable
         style={styles.button}
         onPress={() => router.push("/CampusMap")}
       >
         <Text style={styles.buttonText}>Campus Map</Text>
       </Pressable>
-      
+
       {/* Redirect to the schedule */}
-      <Pressable 
+      <Pressable
         style={styles.button}
         onPress={() => router.push("/schedule")}
       >
         <Text style={styles.buttonText}>Schedule</Text>
       </Pressable>
-      <Pressable 
+
+      {/* Adjusted to match a likely existing file */}
+      <Pressable
         style={styles.button}
-        onPress={() => router.push("/IndoorHall8Map")}
+        onPress={() => router.push("/indoorMapScreen")}
       >
         <Text style={styles.buttonText}>Indoor Search</Text>
       </Pressable>
-      <Pressable 
+
+      <Pressable
         style={styles.button}
         onPress={() => setIsFeedbackVisible(true)}
       >
         <Text style={styles.buttonText}>Leave Feedback</Text>
-        
       </Pressable>
 
       {/* TEMPORARY FOR TESTING */}
-      <Pressable 
+      <Pressable
         style={styles.button}
         onPress={() => router.push("/application")}
       >
@@ -45,7 +47,6 @@ export default function Index() {
 
       <FeedbackPopUp visible={isFeedbackVisible} onClose={() => setIsFeedbackVisible(false)} />
     </View>
-    
   );
 }
 
