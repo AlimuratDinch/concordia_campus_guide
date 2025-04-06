@@ -121,8 +121,8 @@ describe('ConcordiaApp', () => {
     render(<ConcordiaApp />);
     fireEvent.press(screen.getByTestId('tab-campus'));
 
-    fireEvent.press(screen.getByText('Shuttle schedule (WIP)'));
-    fireEvent.press(screen.getByText('Shuttle tracker (WIP)'));
+    fireEvent.press(screen.getByText('Shuttle Information'));
+    fireEvent.press(screen.getByText('Shuttle Tracker'));
     //both items just do router.push('/') in code (NEEDS TO BE CHANGED ONCE IMPLEMENTED IN CODE or REMOVED)
     expect(router.push).toHaveBeenCalledTimes(2);
   });
