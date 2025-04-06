@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { GraphNode, Rawnodes as nodes } from "./nodesData"; // Adjust path
+import { GraphNode, Rawnodes as nodes } from "./nodesData";
 
 interface IndoorSearchProps {
-  nodes?: GraphNode[]; // Optional, defaults to imported nodes
+  nodes?: GraphNode[];
   onSearch: (start: string, target: string, accessibility: TravelType) => void;
 }
 
@@ -70,7 +70,7 @@ const TravelTypePicker: React.FC<{
   onChange: (value: TravelType) => void;
 }> = ({ value, onChange }) => (
   <View style={styles.pickerContainer}>
-    <Text style={styles.label}>Travel Type:</Text>
+    <Text style={styles.label}>Travel Type</Text>
     <Picker
       selectedValue={value}
       onValueChange={onChange}
@@ -91,20 +91,22 @@ const IndoorSearch: React.FC<IndoorSearchProps> = ({ nodes: propNodes = nodes, o
   const [endNode, setEndNode] = useState<string | null>(null);
   const [travelType, setTravelType] = useState<TravelType>(TravelType.Standard);
 
-  // Memoize derived data to avoid unnecessary recalculations
   const filteredNodes = useMemo(
     () => propNodes.filter((node: GraphNode) => node.type !== "hallway"),
     [propNodes]
   );
+
   const floors = useMemo(
     () =>
       [...new Set(filteredNodes.map((node: GraphNode) => node.floor).filter((floor): floor is string => floor !== undefined))],
     [filteredNodes]
   );
+
   const filteredStartNodes = useMemo(
     () => filteredNodes.filter((node: GraphNode) => node.floor === startFloor),
     [filteredNodes, startFloor]
   );
+
   const filteredEndNodes = useMemo(
     () => filteredNodes.filter((node: GraphNode) => node.floor === endFloor),
     [filteredNodes, endFloor]
@@ -120,46 +122,59 @@ const IndoorSearch: React.FC<IndoorSearchProps> = ({ nodes: propNodes = nodes, o
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Indoor Navigation</Text>
+
       <FloorPicker label="Start Floor" value={startFloor} onChange={setStartFloor} floors={floors} />
-      <NodePicker
-        label="Start Location"
-        value={startNode}
-        onChange={setStartNode}
-        nodes={filteredStartNodes}
-      />
+      <NodePicker label="Start Location" value={startNode} onChange={setStartNode} nodes={filteredStartNodes} />
+
       <FloorPicker label="End Floor" value={endFloor} onChange={setEndFloor} floors={floors} />
       <NodePicker label="End Location" value={endNode} onChange={setEndNode} nodes={filteredEndNodes} />
+
       <TravelTypePicker value={travelType} onChange={setTravelType} />
-      <Button title="Search" onPress={handleSearch} color="#007AFF" />
+
+      <View style={styles.buttonWrapper}>
+        <Button title="Find Path" onPress={handleSearch} color="#8A1538" />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    padding: 5,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    marginVertical: 5,
+    width: "90%",
+    alignSelf: "center",
+    backgroundColor: "#f3f3f3",
+    borderRadius: 10,
+    padding: 15,
+    elevation: 2,
+    marginVertical: 20,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#8A1538",
+    marginBottom: 10,
+    textAlign: "center",
   },
   pickerContainer: {
-    marginBottom: 5,
+    marginBottom: 10,
   },
   label: {
-    fontSize: 12,
-    fontWeight: "bold",
+    fontSize: 14,
+    fontWeight: "600",
     color: "#333",
+    marginBottom: 4,
   },
   picker: {
-    height: 50,
-    width: "100%",
+    backgroundColor: "#f9f9f9",
+    borderRadius: 6,
   },
   pickerItem: {
     height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 4,
-    paddingHorizontal: 5,
+    fontSize: 14,
+  },
+  buttonWrapper: {
+    marginTop: 15,
   },
 });
 
