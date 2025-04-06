@@ -87,7 +87,7 @@ const fetchCalendarEvents = async (accessToken: string) => {
     try {
       const userInfo = await GoogleSignin.signInSilently();
       if(isLoading === true && isSignedIn === false){
-        console.log("sign in variables schedule check")
+        console.log("sign in variables schedule check" + isLoading)
       }
       if (userInfo) {
         setIsSignedIn(true);
