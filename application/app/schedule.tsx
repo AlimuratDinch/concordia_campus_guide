@@ -5,8 +5,8 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 export default function Schedule() {
   const [events, setEvents] = useState<Event[]>([]);
   // commented out because they are never used
-  const [_isSignedIn, setIsSignedIn] = useState(false);
-  const [_isLoading, setLoading] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   
 
@@ -86,6 +86,9 @@ const fetchCalendarEvents = async (accessToken: string) => {
   const getAccessTokenAndFetchEvents = async () => {
     try {
       const userInfo = await GoogleSignin.signInSilently();
+      if(isLoading === true && isSignedIn === false){
+        console.log("sign in variables schedule check")
+      }
       if (userInfo) {
         setIsSignedIn(true);
         const tokens = await GoogleSignin.getTokens();
