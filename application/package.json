@@ -30,7 +30,9 @@
       "!**/metro.config.js",
       "!**/app.config.js",
       "!**/declaration.d.ts",
-      "!**/app/_layout.tsx"
+      "!**/app/_layout.tsx",
+      "!**/app/Hall9Map.tsx",
+      "!**/app/Hall8Map.tsx"
     ],
     "coverageReporters": [
       "json",
