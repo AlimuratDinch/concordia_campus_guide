@@ -5,7 +5,9 @@ import { FloorMap } from "./FloorMap"; // Adjust path
 import { filterNodesByFloor } from "./utils"; // Adjust path
 import Hall8 from "../assets/indoorMaps/Hall-8.svg"; // Adjust path
 
+// interface for TSX prop
 interface Hall8MapProps {
+
   path: string[];
   style?: StyleProp<ViewStyle>;
 }

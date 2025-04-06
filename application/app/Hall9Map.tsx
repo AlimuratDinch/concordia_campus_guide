@@ -1,10 +1,12 @@
 // Hall9Map.tsx
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
-import { FloorMap } from "./FloorMap"; // Adjust path
-import { filterNodesByFloor } from "./utils"; // Adjust path
-import Hall9 from "../assets/indoorMaps/Hall-9.svg"; // Adjust path
+import { FloorMap } from "./FloorMap";
+import { filterNodesByFloor } from "./utils";
+import Hall9 from "../assets/indoorMaps/Hall-9.svg";
 
+
+// interface for TSX prop
 interface Hall9MapProps {
   path: string[];
   style?: StyleProp<ViewStyle>;

@@ -19,11 +19,14 @@ export const FloorMap = ({ floor, nodes, path, BackgroundSvg, style }: FloorMapP
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
+//Component to refactor
   const pinchGesture = Gesture.Pinch().onUpdate((event) => {
+
     scale.value = event.scale;
   });
 
   const panGesture = Gesture.Pan().onUpdate((event) => {
+
     translateX.value = event.translationX;
     translateY.value = event.translationY;
   });
