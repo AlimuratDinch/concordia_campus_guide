@@ -23,7 +23,7 @@ export default function Index() {
       </Pressable>
       <Pressable 
         style={styles.button}
-        onPress={() => router.push("/indoorMapScreen")}
+        onPress={() => router.push("/IndoorHall8Map")}
       >
         <Text style={styles.buttonText}>Indoor Search</Text>
       </Pressable>
