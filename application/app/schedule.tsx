@@ -4,7 +4,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function Schedule() {
   const [events, setEvents] = useState<Event[]>([]);
-  // commented out because they are never used
+  
   const [isLoading, setLoading] = useState(true);
   const [isSignedIn, setIsSignedIn] = useState(false);
   
