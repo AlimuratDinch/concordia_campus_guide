@@ -34,7 +34,6 @@ jest.mock("expo-location", () => ({
 
 // Mock react-native-maps to avoid native module issues in testing
 jest.mock('react-native-maps', () => {
-  const React = require('react');
   return {
     __esModule: true,
     default: 'MapView',
