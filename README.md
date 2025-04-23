@@ -7,14 +7,17 @@ You can install it following that link: https://nodejs.org/en
 ## Installation
 
 ### Chaning directory to the repo
-`cd minicap_concordia/application`
+`cd concordia_campus_guide/application`
 ### Changing the branch
 `git checkout develop`
 
 ### Installing the expo
-`npm install expo`
-### Running the Up
-`npx expo start` or `npx expo start -c`. The second command will delete the cache
+`npm install`
+### Running the App
+`npx expo prebuild` 
+
+`npx expo run:android` 
+
 ## Members
 Bulat Abdullin - 40264963 <br>
 Alimurat Dinchdonmez - 40245310 <br>
